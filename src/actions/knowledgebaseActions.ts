@@ -41,7 +41,7 @@ export async function createArticleAction(data: { title: string, content: string
 
         const result = await res.json();
         if (result.success) {
-            revalidatePath('/support/knowledgebase'); // Aapka admin table path
+            revalidatePath('/knowledgebase'); // Aapka admin table path
         }
         return result;
     } catch (error) {
