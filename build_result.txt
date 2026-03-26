@@ -1,0 +1,125 @@
+﻿
+> frontend@0.1.0 build
+> next build
+
+node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but it 
+may not be correct.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (ΓÜá Warning:    
+ Ne...not be correc    
+t.:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+ We detected multiple 
+lockfiles and selected 
+the directory of C:\nig
+hwantech.com\package-lo
+ck.json as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs.o
+rg/docs/app/api-referen
+ce/config/next-config-j
+s/turbopack#root-direct
+ory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * C:\nighwantech.com
+\frontend\package-lock.
+json
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+
+ΓÜá The "middleware" 
+file convention is 
+deprecated. Please use 
+"proxy" instead. Learn 
+more: https://nextjs.or
+g/docs/messages/middlew
+are-to-proxy
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 9.8s
+  Running TypeScript ...
+Failed to compile.
+
+./src/components/dashbo
+ard/DashboardSidebar.ts
+x:99:52
+Type error: Type 
+'number' is not 
+assignable to type 
+'never'.
+
+[0m [90m  97 |[39m  
+                       
+        [33m>[39m
+ [90m  98 |[39m      
+                       
+        [33m<[39m[33
+mdiv[39m className[33
+m=[39m{[32m`flex 
+items-center 
+${isCollapsed ? '' : 'g
+ap-3'}`[39m}[33m>[39
+m
+[31m[1m>[22m[39m[9
+0m  99 |[39m          
+                       
+        [33m<[39m[33
+mitem[39m[33m.[39mic
+on size[33m=[39m{[35
+m20[39m} strokeWidth[
+33m=[39m{[35m1.5[39m
+} className[33m=[39m
+[32m"shrink-0 
+text-slate-400"[39m 
+[33m/[39m[33m>[39m
+ [90m     |[39m      
+                       
+                       
+[31m[1m^[22m[39m
+ [90m 100 |[39m      
+                       
+            {[33m![39
+misCollapsed 
+[33m&&[39m (
+ [90m 101 |[39m      
+                       
+                [33m<
+[39m[33mspan[39m clas
+sName[33m=[39m[32m"t
+ext-[13.5px] font-mediu
+m"[39m[33m>[39m{item
+[33m.[39mlabel}[33m<
+[39m[33m/[39m[33msp
+an[39m[33m>[39m
+ [90m 102 |[39m      
+                       
+            )}[0m
+Next.js build worker 
+exited with code: 1 
+and signal: null

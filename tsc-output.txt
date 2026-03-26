@@ -1,0 +1,150 @@
+﻿src/lib/placeholders.ts(20,10): error TS1005: '>' expected.
+src/lib/placeholders.ts(20,15): error TS1005: ')' expected.
+src/lib/placeholders.ts(20,45): error TS1005: ',' expected.
+src/lib/placeholders.ts(20,56): error TS1005: ',' expected.
+src/lib/placeholders.ts(20,68): error TS1005: ',' expected.
+src/lib/placeholders.ts(20,88): error TS1005: ',' expected.
+src/lib/placeholders.ts(20,100): error TS1005: ',' expected.
+src/lib/placeholders.ts(20,122): error TS1005: ',' expected.
+src/lib/placeholders.ts(20,138): error TS1005: ',' expected.
+src/lib/placeholders.ts(20,160): error TS1005: ',' expected.
+src/lib/placeholders.ts(21,17): error TS1005: '>' expected.
+src/lib/placeholders.ts(21,23): error TS1005: ',' expected.
+src/lib/placeholders.ts(21,42): error TS1005: ':' expected.
+src/lib/placeholders.ts(21,44): error TS1110: Type expected.
+src/lib/placeholders.ts(22,17): error TS1005: ',' expected.
+src/lib/placeholders.ts(22,41): error TS1110: Type expected.
+src/lib/placeholders.ts(23,6): error TS1161: Unterminated regular expression literal.
+src/lib/placeholders.ts(24,3): error TS1005: ',' expected.
+src/lib/placeholders.ts(24,4): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(26,10): error TS1005: '>' expected.
+src/lib/placeholders.ts(26,15): error TS1005: ')' expected.
+src/lib/placeholders.ts(26,45): error TS1005: ';' expected.
+src/lib/placeholders.ts(26,56): error TS1005: ';' expected.
+src/lib/placeholders.ts(26,68): error TS1005: ';' expected.
+src/lib/placeholders.ts(26,88): error TS1005: ';' expected.
+src/lib/placeholders.ts(26,100): error TS1005: ';' expected.
+src/lib/placeholders.ts(26,122): error TS1005: ';' expected.
+src/lib/placeholders.ts(26,138): error TS1005: ';' expected.
+src/lib/placeholders.ts(26,160): error TS1005: ';' expected.
+src/lib/placeholders.ts(27,15): error TS1005: '>' expected.
+src/lib/placeholders.ts(27,17): error TS1005: ';' expected.
+src/lib/placeholders.ts(27,23): error TS1005: ';' expected.
+src/lib/placeholders.ts(27,31): error TS1005: ';' expected.
+src/lib/placeholders.ts(27,39): error TS1110: Type expected.
+src/lib/placeholders.ts(28,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(28,20): error TS1005: ';' expected.
+src/lib/placeholders.ts(28,28): error TS1005: ';' expected.
+src/lib/placeholders.ts(28,36): error TS1005: ';' expected.
+src/lib/placeholders.ts(28,45): error TS1110: Type expected.
+src/lib/placeholders.ts(29,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(29,109): error TS1110: Type expected.
+src/lib/placeholders.ts(30,6): error TS1161: Unterminated regular expression literal.
+src/lib/placeholders.ts(31,3): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(31,4): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(33,10): error TS1005: '>' expected.
+src/lib/placeholders.ts(33,15): error TS1005: ')' expected.
+src/lib/placeholders.ts(33,45): error TS1005: ';' expected.
+src/lib/placeholders.ts(33,56): error TS1005: ';' expected.
+src/lib/placeholders.ts(33,68): error TS1005: ';' expected.
+src/lib/placeholders.ts(33,88): error TS1005: ';' expected.
+src/lib/placeholders.ts(33,100): error TS1005: ';' expected.
+src/lib/placeholders.ts(33,122): error TS1005: ';' expected.
+src/lib/placeholders.ts(33,138): error TS1005: ';' expected.
+src/lib/placeholders.ts(33,160): error TS1005: ';' expected.
+src/lib/placeholders.ts(34,13): error TS1005: '>' expected.
+src/lib/placeholders.ts(34,14): error TS1005: ';' expected.
+src/lib/placeholders.ts(34,19): error TS1005: ';' expected.
+src/lib/placeholders.ts(34,25): error TS1005: ';' expected.
+src/lib/placeholders.ts(34,36): error TS1005: ';' expected.
+src/lib/placeholders.ts(34,48): error TS1005: ';' expected.
+src/lib/placeholders.ts(34,55): error TS1005: ';' expected.
+src/lib/placeholders.ts(34,63): error TS1110: Type expected.
+src/lib/placeholders.ts(35,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(35,21): error TS1005: ';' expected.
+src/lib/placeholders.ts(35,29): error TS1005: ';' expected.
+src/lib/placeholders.ts(35,40): error TS1005: ';' expected.
+src/lib/placeholders.ts(35,49): error TS1110: Type expected.
+src/lib/placeholders.ts(36,6): error TS1161: Unterminated regular expression literal.
+src/lib/placeholders.ts(37,3): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(37,4): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(39,10): error TS1005: '>' expected.
+src/lib/placeholders.ts(39,15): error TS1005: ')' expected.
+src/lib/placeholders.ts(39,45): error TS1005: ';' expected.
+src/lib/placeholders.ts(39,56): error TS1005: ';' expected.
+src/lib/placeholders.ts(39,68): error TS1005: ';' expected.
+src/lib/placeholders.ts(39,88): error TS1005: ';' expected.
+src/lib/placeholders.ts(39,100): error TS1005: ';' expected.
+src/lib/placeholders.ts(39,122): error TS1005: ';' expected.
+src/lib/placeholders.ts(39,138): error TS1005: ';' expected.
+src/lib/placeholders.ts(39,160): error TS1005: ';' expected.
+src/lib/placeholders.ts(40,13): error TS1005: '>' expected.
+src/lib/placeholders.ts(40,14): error TS1005: ';' expected.
+src/lib/placeholders.ts(40,64): error TS1110: Type expected.
+src/lib/placeholders.ts(41,6): error TS1161: Unterminated regular expression literal.
+src/lib/placeholders.ts(42,3): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(42,4): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(44,10): error TS1005: '>' expected.
+src/lib/placeholders.ts(44,15): error TS1005: ')' expected.
+src/lib/placeholders.ts(44,45): error TS1005: ';' expected.
+src/lib/placeholders.ts(44,56): error TS1005: ';' expected.
+src/lib/placeholders.ts(44,68): error TS1005: ';' expected.
+src/lib/placeholders.ts(44,88): error TS1005: ';' expected.
+src/lib/placeholders.ts(44,100): error TS1005: ';' expected.
+src/lib/placeholders.ts(44,122): error TS1005: ';' expected.
+src/lib/placeholders.ts(44,138): error TS1005: ';' expected.
+src/lib/placeholders.ts(44,160): error TS1005: ';' expected.
+src/lib/placeholders.ts(45,13): error TS1005: '>' expected.
+src/lib/placeholders.ts(45,14): error TS1005: ';' expected.
+src/lib/placeholders.ts(45,55): error TS1110: Type expected.
+src/lib/placeholders.ts(46,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(46,27): error TS1110: Type expected.
+src/lib/placeholders.ts(47,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(47,44): error TS1110: Type expected.
+src/lib/placeholders.ts(48,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(48,28): error TS1110: Type expected.
+src/lib/placeholders.ts(49,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(49,29): error TS1110: Type expected.
+src/lib/placeholders.ts(50,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(50,69): error TS1110: Type expected.
+src/lib/placeholders.ts(51,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(51,53): error TS1110: Type expected.
+src/lib/placeholders.ts(52,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(52,52): error TS1110: Type expected.
+src/lib/placeholders.ts(53,6): error TS1161: Unterminated regular expression literal.
+src/lib/placeholders.ts(54,3): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(54,4): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(56,10): error TS1005: '>' expected.
+src/lib/placeholders.ts(56,15): error TS1005: ')' expected.
+src/lib/placeholders.ts(56,45): error TS1005: ';' expected.
+src/lib/placeholders.ts(56,56): error TS1005: ';' expected.
+src/lib/placeholders.ts(56,68): error TS1005: ';' expected.
+src/lib/placeholders.ts(56,88): error TS1005: ';' expected.
+src/lib/placeholders.ts(56,100): error TS1005: ';' expected.
+src/lib/placeholders.ts(56,122): error TS1005: ';' expected.
+src/lib/placeholders.ts(56,138): error TS1005: ';' expected.
+src/lib/placeholders.ts(56,160): error TS1005: ';' expected.
+src/lib/placeholders.ts(57,13): error TS1005: '>' expected.
+src/lib/placeholders.ts(57,14): error TS1005: ';' expected.
+src/lib/placeholders.ts(57,77): error TS1110: Type expected.
+src/lib/placeholders.ts(58,17): error TS1005: ';' expected.
+src/lib/placeholders.ts(58,42): error TS1110: Type expected.
+src/lib/placeholders.ts(59,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(59,21): error TS1005: ';' expected.
+src/lib/placeholders.ts(59,29): error TS1005: ';' expected.
+src/lib/placeholders.ts(59,40): error TS1005: ';' expected.
+src/lib/placeholders.ts(59,49): error TS1110: Type expected.
+src/lib/placeholders.ts(60,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(60,20): error TS1005: ';' expected.
+src/lib/placeholders.ts(60,28): error TS1005: ';' expected.
+src/lib/placeholders.ts(60,36): error TS1005: ';' expected.
+src/lib/placeholders.ts(60,45): error TS1110: Type expected.
+src/lib/placeholders.ts(61,13): error TS1005: ';' expected.
+src/lib/placeholders.ts(61,20): error TS1005: ';' expected.
+src/lib/placeholders.ts(61,28): error TS1005: ';' expected.
+src/lib/placeholders.ts(61,36): error TS1005: ';' expected.
+src/lib/placeholders.ts(61,45): error TS1110: Type expected.
+src/lib/placeholders.ts(62,6): error TS1161: Unterminated regular expression literal.
+src/lib/placeholders.ts(63,3): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(63,4): error TS1128: Declaration or statement expected.
+src/lib/placeholders.ts(64,1): error TS1128: Declaration or statement expected.

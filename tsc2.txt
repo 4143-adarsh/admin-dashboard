@@ -1,0 +1,23 @@
+.next/dev/types/validator.ts(108,31): error TS2344: Type 'typeof import("c:/nighwantech.com/frontend/src/app/career/page")' does not satisfy the constraint 'AppPageConfig<"/career">'.
+  Property 'default' is missing in type 'typeof import("c:/nighwantech.com/frontend/src/app/career/page")' but required in type 'AppPageConfig<"/career">'.
+.next/types/validator.ts(24,44): error TS2344: Type 'Route' does not satisfy the constraint '"/"'.
+  Type 'LayoutRoutes' is not assignable to type '"/"'.
+    Type '"/who-we-are"' is not assignable to type '"/"'.
+.next/types/validator.ts(24,75): error TS2344: Type 'Route' does not satisfy the constraint '"/"'.
+  Type 'LayoutRoutes' is not assignable to type '"/"'.
+    Type '"/who-we-are"' is not assignable to type '"/"'.
+.next/types/validator.ts(79,31): error TS2344: Type 'typeof import("c:/nighwantech.com/frontend/src/app/career/page")' does not satisfy the constraint 'AppPageConfig<"/career">'.
+  Property 'default' is missing in type 'typeof import("c:/nighwantech.com/frontend/src/app/career/page")' but required in type 'AppPageConfig<"/career">'.
+.next/types/validator.ts(150,39): error TS2307: Cannot find module '../../src/app/what-we-do/page.js' or its corresponding type declarations.
+.next/types/validator.ts(159,39): error TS2307: Cannot find module '../../src/app/who-we-are/about-mission/page.js' or its corresponding type declarations.
+.next/types/validator.ts(168,39): error TS2307: Cannot find module '../../src/app/who-we-are/awards/page.js' or its corresponding type declarations.
+.next/types/validator.ts(177,39): error TS2307: Cannot find module '../../src/app/who-we-are/clients-partners/page.js' or its corresponding type declarations.
+.next/types/validator.ts(186,39): error TS2307: Cannot find module '../../src/app/who-we-are/ethics/page.js' or its corresponding type declarations.
+.next/types/validator.ts(195,39): error TS2307: Cannot find module '../../src/app/who-we-are/global-presence/page.js' or its corresponding type declarations.
+.next/types/validator.ts(204,39): error TS2307: Cannot find module '../../src/app/who-we-are/journey/page.js' or its corresponding type declarations.
+.next/types/validator.ts(213,39): error TS2307: Cannot find module '../../src/app/who-we-are/leadership/page.js' or its corresponding type declarations.
+.next/types/validator.ts(222,39): error TS2307: Cannot find module '../../src/app/who-we-are/newsroom/page.js' or its corresponding type declarations.
+.next/types/validator.ts(231,39): error TS2307: Cannot find module '../../src/app/who-we-are/page.js' or its corresponding type declarations.
+.next/types/validator.ts(240,39): error TS2307: Cannot find module '../../src/app/who-we-are/products-solutions/page.js' or its corresponding type declarations.
+.next/types/validator.ts(249,39): error TS2307: Cannot find module '../../src/app/who-we-are/responsibility/page.js' or its corresponding type declarations.
+.next/types/validator.ts(282,39): error TS2307: Cannot find module '../../src/app/who-we-are/layout.js' or its corresponding type declarations.

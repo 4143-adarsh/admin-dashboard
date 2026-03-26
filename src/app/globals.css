@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-textmain antialiased;
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- 🚀 Optimized Section Fix --- */
+.section {
+  /* Strictly keeping your flex logic but tightening padding for mobile */
+  @apply py-10 px-6 flex flex-col items-center justify-center;
+  min-height: auto;
+}
+
+@media (min-width: 768px) {
+  .section {
+    /* Desktop par balance banaye rakhne ke liye */
+    @apply py-16 px-12;
+    min-height: auto;
+  }
+}
+
+/* --- 🏁 Navbar Offset Fix (The Overlap Solution) --- */
+/* Pehle section mein ye class zaroor lagayein */
+.pt-navbar {
+  @apply pt-24 md:pt-36;
+}
+
+/* Container */
+.container-custom {
+  @apply max-w-7xl mx-auto px-6 md:px-12 w-full;
+}
+
+/* --- Headings (Orange) --- */
+.heading-xl {
+  @apply text-brandOrange font-bold tracking-tight uppercase text-center;
+  /* Strictly using clamp to ensure mobile safety */
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+}
+
+/* --- Subtitle/Paragraph (Green) --- */
+.text-muted {
+  @apply text-brandGreen font-medium text-center mx-auto max-w-2xl;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  line-height: 1.6;
+}
+
+/* Section Padding Helper */
+.section-padding {
+  /* Mobile par py-12 aur Desktop par py-20, standard industry gap */
+  @apply py-12 md:py-20;
+}
+
+/* mobile padding fix */
+@media (max-width: 768px) {
+
+  .section,
+  .container-custom {
+    padding-top: 50px !important;
+    /* Logo ki height ke hisaab se adjust karein */
+  }
+
+  /* Logo overlap rokne ke liye */
+  .heading-xl {
+    margin-top: 20px;
+  }
+}
+
+/* =========================================
+   🎯 BUTTON FIXES (Perfectly Aligned & Error Free) 
+========================================= */
+
+/* 1. Primary Button (Dark Background, Orange Hover) */
+.btn-primary {
+  @apply bg-textmain text-white px-8 py-3 rounded-full font-bold transition duration-300 hover:bg-brandOrange hover:scale-105 inline-flex items-center justify-center flex-row gap-2 whitespace-nowrap overflow-hidden;
+  line-height: 1;
+}
+
+/* 2. World-Class Inverse Button (White Background, Orange Hover) for Dark Sections */
+.btn-inverse {
+  @apply bg-white text-textmain px-8 py-3 rounded-full font-bold transition duration-300 hover:bg-brandOrange hover:text-white hover:scale-105 inline-flex items-center justify-center flex-row gap-2 whitespace-nowrap overflow-hidden;
+  line-height: 1;
+  /* 🔥 Turbopack Error Fix: Shadow ko @apply se bahar nikal kar yahan rakha hai */
+  box-shadow: 0 4px 14px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Shared Arrow/Icon Alignment logic for both buttons */
+.btn-primary svg,
+.btn-primary i,
+.btn-primary span.arrow,
+.btn-inverse svg,
+.btn-inverse i,
+.btn-inverse span.arrow {
+  @apply flex-shrink-0;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1px;
+  /* Visual center balance */
+}

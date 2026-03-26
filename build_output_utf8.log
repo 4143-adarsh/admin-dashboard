@@ -1,0 +1,84 @@
+﻿
+> frontend@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 5.2s
+  Running TypeScript ...
+node.exe : Failed to 
+compile.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Failed    
+ to compile.:Stri    
+ng) [], RemoteEx    
+ception
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+
+.next/dev/types/valid
+ator.ts:204:39
+Type error: Cannot 
+find module '../../..
+/src/app/what-we-thin
+k/devops/page.js' or 
+its corresponding 
+type declarations.
+
+[0m [90m 202 
+|[39m {
+ [90m 203 |[39m   
+type __IsExpected[33
+m<[39m[33mSpecific
+[39m 
+[36mextends[39m [3
+3mAppPageConfig[39m
+[33m<[39m[32m"/what
+-we-think/devops"[39
+m[33m>>[39m 
+[33m=[39m 
+[33mSpecific[39m
+[31m[1m>[22m[39m
+[90m 204 |[39m   
+[36mconst[39m 
+handler [33m=[39m 
+{} [36mas[39m 
+[36mtypeof[39m [36
+mimport[39m([32m"..
+/../../src/app/what-w
+e-think/devops/page.j
+s"[39m)
+ [90m     |[39m    
+                     
+              
+[31m[1m^[22m[39m
+ [90m 205 |[39m   
+type __Check 
+[33m=[39m __IsExpec
+ted[33m<[39m[36mty
+peof[39m 
+handler[33m>[39m
+ [90m 206 |[39m   
+[90m// 
+@ts-ignore[39m
+ [90m 207 |[39m   
+type __Unused 
+[33m=[39m 
+__Check[0m
+Next.js build worker 
+exited with code: 1 
+and signal: null
