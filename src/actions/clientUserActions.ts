@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 const getBaseUrl = () => {
-    if (process.env.NODE_ENV === "development") return "http://127.0.0.1:5000/api";
+    if (process.env.NODE_ENV === "development") return "http://127.0.0.1:5000";
     return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com"; 
 };
 const API_URL = getBaseUrl();
