@@ -2,8 +2,15 @@
 
 import { revalidatePath } from 'next/cache';
 
-// 🔥 TESTING KE LIYE HARDCODED URL (Jaise Tickets mein hai)
-const API_URL = "http://127.0.0.1:5000/api/support/knowledgebase";
+// 🔥 DYNAMIC API URL (Local vs Production)
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === "development") {
+        return "http://127.0.0.1:5000";
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
+};
+
+const API_URL = `${getBaseUrl()}/api/support/knowledgebase`;
 
 // 1. Get All Articles (Admin)
 export async function getAdminArticlesAction() {
@@ -41,7 +48,7 @@ export async function createArticleAction(data: { title: string, content: string
 
         const result = await res.json();
         if (result.success) {
-            revalidatePath('/knowledgebase'); // Aapka admin table path
+            revalidatePath('/knowledgebase'); // Sahi path
         }
         return result;
     } catch (error) {
@@ -60,7 +67,7 @@ export async function updateArticleAction(id: number, data: { title?: string, co
 
         const result = await res.json();
         if (result.success) {
-            revalidatePath('/support/knowledgebase');
+            revalidatePath('/knowledgebase'); // Fix: Update ke liye bhi sahi path
         }
         return result;
     } catch (error) {
@@ -77,7 +84,7 @@ export async function deleteArticleAction(id: number) {
 
         const result = await res.json();
         if (result.success) {
-            revalidatePath('/support/knowledgebase');
+            revalidatePath('/knowledgebase'); // Fix: Delete ke liye bhi sahi path
         }
         return result;
     } catch (error) {

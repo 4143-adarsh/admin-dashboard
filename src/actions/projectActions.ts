@@ -1,7 +1,16 @@
 'use server'
 
-// 🔥 Hardcoded URL: Kyunki browser mein localhost kaam kar raha hai, hum yahi use karenge.
-const API_URL = 'http://localhost:5000';
+import { revalidatePath } from 'next/cache';
+
+// 🔥 DYNAMIC API URL (Local vs Production)
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === "development") {
+        return "http://127.0.0.1:5000"; // Localhost for dev
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
+};
+
+const API_URL = getBaseUrl();
 
 // 1. Fetch All Projects
 export async function getProjectsAction() {
@@ -42,7 +51,9 @@ export async function createProjectAction(formData: any) {
             return { success: false, message: "API URL issue: Backend sent HTML instead of JSON." };
         }
 
-        return await res.json();
+        const result = await res.json();
+        if (result.success) revalidatePath('/projects');
+        return result;
     } catch (error) {
         console.error("❌ Create Action Error (POST):", error);
         return { success: false, message: "Failed to connect to backend server." };
@@ -65,7 +76,9 @@ export async function updateProjectAction(projectId: string, formData: any) {
             return { success: false, message: "API didn't return JSON." };
         }
 
-        return await res.json();
+        const result = await res.json();
+        if (result.success) revalidatePath('/projects');
+        return result;
     } catch (error) {
         return { success: false, message: "Failed to update project" };
     }
@@ -85,7 +98,9 @@ export async function deleteProjectAction(projectId: string) {
             return { success: false, message: "API didn't return JSON." };
         }
 
-        return await res.json();
+        const result = await res.json();
+        if (result.success) revalidatePath('/projects');
+        return result;
     } catch (error) {
         return { success: false, message: "Failed to delete project" };
     }

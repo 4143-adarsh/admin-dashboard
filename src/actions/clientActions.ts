@@ -1,6 +1,14 @@
 'use server'
 
-const API_URL = 'http://localhost:5000/api/clients';
+// 🔥 DYNAMIC API URL (Local vs Production)
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === "development") {
+        return "http://127.0.0.1:5000";
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
+};
+
+const API_URL = `${getBaseUrl()}/api/clients`;
 
 // 1. CREATE: Naya Client Add Karna
 export async function createClientAction(formData: any) {

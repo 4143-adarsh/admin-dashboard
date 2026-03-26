@@ -1,10 +1,17 @@
 // File: actions/services.ts
 "use server";
 
+import { revalidatePath } from 'next/cache';
 
+// 🔥 DYNAMIC API URL (Local vs Production)
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === "development") {
+        return "http://127.0.0.1:5000";
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
+};
 
-
-const API_URL = 'http://127.0.0.1:5000/api/services';
+const API_URL = `${getBaseUrl()}/api/services`;
 
 // 1. Fetch all services
 export async function getServices() {
@@ -23,6 +30,7 @@ export async function deleteService(id: number) {
   try {
     const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
     const data = await res.json();
+    if (data.success) revalidatePath('/services');
     return data;
   } catch (error) {
     console.error("Error deleting service:", error);
@@ -39,6 +47,7 @@ export async function updateServiceToggle(id: number, updateData: any) {
       body: JSON.stringify(updateData),
     });
     const data = await res.json();
+    if (data.success) revalidatePath('/services');
     return data;
   } catch (error) {
     console.error("Error updating service:", error);
@@ -55,6 +64,7 @@ export async function createService(serviceData: any) {
       body: JSON.stringify(serviceData),
     });
     const data = await res.json();
+    if (data.success) revalidatePath('/services');
     return data;
   } catch (error) {
     console.error("Error creating service:", error);
@@ -83,6 +93,7 @@ export async function updateService(id: number, serviceData: any) {
       body: JSON.stringify(serviceData),
     });
     const data = await res.json();
+    if (data.success) revalidatePath('/services');
     return data;
   } catch (error) {
     console.error(`Error updating service ${id}:`, error);

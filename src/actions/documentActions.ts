@@ -1,6 +1,13 @@
 'use server'
 
-const API_URL = 'http://localhost:5000/api';
+import { revalidatePath } from 'next/cache';
+
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === "development") return "http://127.0.0.1:5000/api";
+    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com/api"; 
+};
+
+const API_URL = getBaseUrl();
 
 // ==========================================
 // 1. CREATE: 🚀 UPDATED FOR MULTER
@@ -14,7 +21,9 @@ export async function uploadDocumentAction(formData: FormData) {
             body: formData, 
             cache: 'no-store'
         });
-        return await res.json();
+        const result = await res.json();
+        if (result.success) revalidatePath('/documents');
+        return result;
     } catch (error: any) { 
         return { success: false, message: error.message }; 
     }
@@ -36,7 +45,9 @@ export async function getAllDocumentsAction() {
 export async function deleteDocumentAction(id: string | number) {
     try {
         const res = await fetch(`${API_URL}/documents/${id}`, { method: 'DELETE', cache: 'no-store' });
-        return await res.json();
+        const result = await res.json();
+        if (result.success) revalidatePath('/documents');
+        return result;
     } catch (error: any) { return { success: false, message: error.message }; }
 }
 
@@ -51,7 +62,9 @@ export async function updateDocumentAction(id: string | number, data: { title: s
             body: JSON.stringify(data),
             cache: 'no-store'
         });
-        return await res.json();
+        const result = await res.json();
+        if (result.success) revalidatePath('/documents');
+        return result;
     } catch (error: any) { return { success: false, message: error.message }; }
 }
 

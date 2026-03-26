@@ -2,8 +2,16 @@
 
 import { revalidatePath } from 'next/cache';
 
+// 🔥 DYNAMIC API URL (Local vs Production)
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === "development") {
+        return "http://127.0.0.1:5000";
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
+};
+
 // Aapke backend ka exact base URL (Tickets ke liye)
-const API_URL = 'http://127.0.0.1:5000/api/support/tickets';
+const API_URL = `${getBaseUrl()}/api/support/tickets`;
 
 // 1. [READ ALL] - Table mein saare tickets dikhane ke liye
 export async function getAllTicketsAction() {

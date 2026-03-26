@@ -12,8 +12,17 @@ export type AuthActionResult = {
     data?: any;
 };
 
+// 🌐 Dynamic Base URL Logic (Local vs Production)
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === "development") {
+        return "http://127.0.0.1:5000";
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
+};
+
 // Aapke naye backend ka URL
-const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || 'http://localhost:5000/api/admin-auth';
+const API_URL = `${getBaseUrl()}/api/admin-auth`;
+
 // ==========================================
 // 1. SIGNUP (Create Admin Account)
 // ==========================================
