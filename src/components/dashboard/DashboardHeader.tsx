@@ -156,7 +156,7 @@ export const DashboardHeader = ({ isCollapsed, toggleSidebar }: DashboardHeaderP
                                 <div className="mb-3">
                                     <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-2">Services</h4>
                                     {searchResults.services.map((service: any) => (
-                                        <Link href={`/services/edit/${service.id}`} key={service.id} className="block p-2 hover:bg-orange-50 rounded-lg cursor-pointer transition-colors">
+                                        <Link href={`/services/edit/${service.id}`} key={service.id} onClick={() => setSearchResults(null)} className="block p-2 hover:bg-orange-50 rounded-lg cursor-pointer transition-colors">
                                             <p className="text-[13px] font-semibold text-slate-800">{service.title}</p>
                                         </Link>
                                     ))}
@@ -224,15 +224,15 @@ export const DashboardHeader = ({ isCollapsed, toggleSidebar }: DashboardHeaderP
                     {/* Settings Dropdown */}
                     {openMenu === 'settings' && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
-                            <a href="#" className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                            <Link href="/settings/company" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                                 <Building size={16} /> Company Details
-                            </a>
-                            <a href="#" className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                            </Link>
+                            <Link href="/settings/team" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                                 <Users size={16} /> Team & Roles
-                            </a>
-                            <a href="#" className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                            </Link>
+                            <Link href="/settings/preferences" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                                 <Settings size={16} /> Preferences
-                            </a>
+                            </Link>
                         </div>
                     )}
                 </div>
@@ -250,18 +250,18 @@ export const DashboardHeader = ({ isCollapsed, toggleSidebar }: DashboardHeaderP
                     {openMenu === 'quickadd' && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
                             <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Create New</div>
-                            <button className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
+                            <Link href="/clients" onClick={() => setOpenMenu(null)} className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
                                 <User size={16} /> Client / Lead
-                            </button>
-                            <button className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
+                            </Link>
+                            <Link href="/projects" onClick={() => setOpenMenu(null)} className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
                                 <Briefcase size={16} /> Project
-                            </button>
-                            <button className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
+                            </Link>
+                            <Link href="/projects" onClick={() => setOpenMenu(null)} className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
                                 <CheckCircle size={16} /> Task
-                            </button>
-                            <button className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
+                            </Link>
+                            <Link href="/invoices" onClick={() => setOpenMenu(null)} className="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors text-left">
                                 <FileText size={16} /> Invoice
-                            </button>
+                            </Link>
                         </div>
                     )}
                 </div>
@@ -308,9 +308,9 @@ export const DashboardHeader = ({ isCollapsed, toggleSidebar }: DashboardHeaderP
                                 <p className="text-[13px] font-semibold text-slate-800">{user?.name || 'User'}</p>
                                 <p className="text-[12px] text-slate-500 truncate">{user?.email || 'admin@nighwan.com'}</p>
                             </div>
-                            <a href="#" className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-slate-50 transition-colors">
+                            <Link href="/profile" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-slate-50 transition-colors">
                                 <User size={16} /> My Profile
-                            </a>
+                            </Link>
                             <div className="h-px bg-slate-50 my-1"></div>
                             <button
                                 onClick={handleLogout}

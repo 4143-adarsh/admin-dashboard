@@ -12,12 +12,19 @@ export type AuthActionResult = {
     data?: any;
 };
 
-// 🌐 Dynamic Base URL Logic (Local vs Production)
+// 🌐 Dynamic Base URL Logic (Bulletproofed)
 const getBaseUrl = () => {
+    let base = process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
     if (process.env.NODE_ENV === "development") {
-        return "http://127.0.0.1:5000";
+        base = "http://127.0.0.1:5000";
     }
-    return process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
+    
+    // Agar end me '/' hai toh use hata dein taaki double slash na bane
+    if (base.endsWith('/')) {
+        base = base.slice(0, -1);
+    }
+
+    return base;
 };
 
 // Aapke naye backend ka URL
