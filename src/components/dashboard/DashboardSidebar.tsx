@@ -37,7 +37,7 @@ const menuItems: MenuItem[] = [
     // Yahan aage chalke '#' ko '/clients' aur '/client-users' se replace kar lenge
     { icon: Users, label: 'Customers', children: [{ name: 'Clients', href: '/clients' }, { name: 'Client Users', href: '/client-users' }] },
 
-    { icon: TrendingUp, label: 'Sales', children: [{ name: 'Leads', href: '#' }, { name: 'Invoices', href: '/invoices' }, { name: 'Proposals', href: '#' }, { name: 'Contracts', href: '#' }, { name: 'Expenses', href: '#' }] },
+   { icon: TrendingUp, label: 'Sales', children: [{ name: 'Leads', href: '/leads' }, { name: 'Invoices', href: '/invoices' }] },
 
     { icon: Briefcase, label: 'Projects', href: '/projects' },
 
