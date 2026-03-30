@@ -26,6 +26,9 @@ export default function ClientUsersPage() {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [successMsg, setSuccessMsg] = useState('');
 
+    // 🔥 NAYA: Validation errors store karne ke liye
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     const initialForm = { fullName: '', email: '', password: '', phone: '', avatar: '', clientId: '' };
     const [formData, setFormData] = useState(initialForm);
 
@@ -46,9 +49,68 @@ export default function ClientUsersPage() {
         setLoading(false);
     };
 
-    // Handle Create & Update
+    // 🔥 NAYA: Smart Input Change Handler (Auto Caps, Numbers Only, etc.)
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        let newValue = value;
+
+        // 1. Auto Caps: Har word ka pehla letter capital (e.g. john doe -> John Doe)
+        if (name === 'fullName') {
+            newValue = value.replace(/\b\w/g, char => char.toUpperCase());
+        } 
+        // 2. Phone Number: Sirf numbers, maximum 10 digits
+        else if (name === 'phone') {
+            newValue = value.replace(/\D/g, '').slice(0, 10);
+        }
+
+        setFormData({ ...formData, [name]: newValue });
+
+        // Jab user type kare toh us field ka error hata do
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: '' });
+        }
+    };
+
+    // Handle Create & Update (With Validation)
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // 🔥 NAYA: Validations Logic
+        const newErrors: Record<string, string> = {};
+
+        // Name Validation
+        if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required";
+        
+        // Email Validation (Must have @)
+        if (!formData.email.trim() || !formData.email.includes('@')) {
+            newErrors.email = "Valid email is required (must contain @)";
+        }
+        
+        // Phone Validation (Exactly 10 digits if provided)
+        if (formData.phone && formData.phone.length !== 10) {
+            newErrors.phone = "Mobile number must be exactly 10 digits";
+        }
+
+        // Password Validation (Mandatory digits and symbols)
+        // Regex: At least 1 number (\d) and 1 special character ([!@#$%^&*.,<>?])
+        const passwordRegex = /(?=.*\d)(?=.*[!@#$%^&*.,<>?])/;
+        if (!isEditing && !formData.password) {
+            newErrors.password = "Password is required for new users";
+        } else if (formData.password && !passwordRegex.test(formData.password)) {
+            newErrors.password = "Password must contain at least one number and one symbol (e.g. @, #, $)";
+        }
+
+        // Client Select Validation
+        if (!formData.clientId) {
+            newErrors.clientId = "Please select a client company";
+        }
+
+        // Agar error hain toh form submit mat karo aur error dikhao
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
         setSubmitLoading(true);
         
         let res;
@@ -83,6 +145,7 @@ export default function ClientUsersPage() {
         });
         setEditId(user.id);
         setIsEditing(true);
+        setErrors({}); // Modal kholte waqt errors clear
         setShowForm(true);
     };
 
@@ -103,6 +166,7 @@ export default function ClientUsersPage() {
         setIsEditing(false);
         setEditId(null);
         setFormData(initialForm);
+        setErrors({}); // Modal band karte waqt errors clear
         setSuccessMsg('');
     };
 
@@ -112,11 +176,19 @@ export default function ClientUsersPage() {
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
 
+    // 🔥 NAYA: Dynamic styling based on validation error
+    const getInputClass = (fieldName: string) => {
+        return `w-full p-2.5 rounded-lg text-sm text-slate-700 outline-none transition-all border ${
+            errors[fieldName] 
+                ? 'border-red-500 focus:border-red-500 bg-red-50/10' 
+                : 'border-slate-200 bg-white focus:border-[#00b4d8]'
+        }`;
+    };
+
     return (
-        // 🔥 Responsive Container & Spacing
         <div className="p-3 md:p-6 lg:p-8 max-w-[1400px] mx-auto space-y-6 bg-slate-50 min-h-screen font-sans overflow-x-hidden w-full">
             
-            {/* 🔝 HEADER SECTION: Responsive Flex Layout */}
+            {/* 🔝 HEADER SECTION */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 pb-2">
                 <div className="w-full md:w-auto">
                     <h1 className="text-2xl md:text-3xl font-light text-[#00b4d8] mb-1 tracking-wide">
@@ -131,7 +203,7 @@ export default function ClientUsersPage() {
                     </div>
                 </div>
                 
-                {/* Actions: Search & Add Button */}
+                {/* Actions */}
                 <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
                     <div className="flex flex-grow md:flex-grow-0 items-center bg-white px-3 py-2 rounded-md border border-slate-200 shadow-sm h-10 w-full md:w-64">
                         <Search className="text-slate-400 mr-2 shrink-0" size={16} />
@@ -154,12 +226,11 @@ export default function ClientUsersPage() {
                 </div>
             </div>
 
-            {/* 📝 POPUP / MODAL SECTION: Fully Responsive */}
+            {/* 📝 POPUP / MODAL SECTION */}
             {showForm && (
                 <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-2 sm:p-4 transition-opacity duration-300 overflow-hidden">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[95vh] animate-in zoom-in-95 duration-200">
                         
-                        {/* Modal Header */}
                         <div className="flex justify-between items-center px-5 md:px-8 py-4 border-b border-slate-100 shrink-0 rounded-t-xl bg-white">
                             <h2 className="text-lg md:text-[20px] font-semibold text-slate-800">
                                 {isEditing ? 'Edit User' : 'Add New User'}
@@ -169,7 +240,6 @@ export default function ClientUsersPage() {
                             </button>
                         </div>
 
-                        {/* Modal Body (Scrollable) */}
                         <div className="p-5 md:p-8 overflow-y-auto custom-scrollbar flex-1">
                             {successMsg && (
                                 <div className="mb-6 p-3 md:p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center gap-2 text-sm font-medium">
@@ -177,7 +247,6 @@ export default function ClientUsersPage() {
                                 </div>
                             )}
 
-                            {/* Responsive Grid Form */}
                             <form onSubmit={handleSubmit} id="userForm" className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 
                                 {/* Basic Info */}
@@ -186,20 +255,32 @@ export default function ClientUsersPage() {
                                     
                                     <div className="space-y-1.5">
                                         <label className="text-[12px] md:text-[13px] font-medium text-slate-500">Full Name <span className="text-red-500">*</span></label>
-                                        <input required type="text" placeholder="e.g. John Doe" className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-[#00b4d8] outline-none transition-all" 
-                                            value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} />
+                                        <input 
+                                            name="fullName" required type="text" placeholder="e.g. John Doe" 
+                                            className={getInputClass('fullName')} 
+                                            value={formData.fullName} onChange={handleInputChange} 
+                                        />
+                                        {errors.fullName && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.fullName}</span>}
                                     </div>
 
                                     <div className="space-y-1.5">
                                         <label className="text-[12px] md:text-[13px] font-medium text-slate-500">Email Address <span className="text-red-500">*</span></label>
-                                        <input required type="email" placeholder="john@example.com" className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-[#00b4d8] outline-none transition-all" 
-                                            value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+                                        <input 
+                                            name="email" required type="email" placeholder="john@example.com" 
+                                            className={getInputClass('email')} 
+                                            value={formData.email} onChange={handleInputChange} 
+                                        />
+                                        {errors.email && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.email}</span>}
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-[12px] md:text-[13px] font-medium text-slate-500">Phone Number</label>
-                                        <input type="text" placeholder="(415) 294-3375" className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-[#00b4d8] outline-none transition-all" 
-                                            value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                                        <label className="text-[12px] md:text-[13px] font-medium text-slate-500">Phone Number (10 Digits)</label>
+                                        <input 
+                                            name="phone" type="text" placeholder="9876543210" 
+                                            className={getInputClass('phone')} 
+                                            value={formData.phone} onChange={handleInputChange} 
+                                        />
+                                        {errors.phone && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.phone}</span>}
                                     </div>
                                 </div>
 
@@ -209,31 +290,42 @@ export default function ClientUsersPage() {
 
                                     <div className="space-y-1.5">
                                         <label className="text-[12px] md:text-[13px] font-medium text-slate-500">Assign to Client Company <span className="text-red-500">*</span></label>
-                                        <select required className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-[#00b4d8] outline-none appearance-none cursor-pointer"
-                                            value={formData.clientId} onChange={e => setFormData({...formData, clientId: e.target.value})}>
+                                        <select 
+                                            name="clientId" required 
+                                            className={`${getInputClass('clientId')} appearance-none cursor-pointer`}
+                                            value={formData.clientId} onChange={handleInputChange}
+                                        >
                                             <option value="" disabled>-- Select a company --</option>
                                             {clients?.map(c => <option key={c.id} value={c.id}>{c.companyName}</option>)}
                                         </select>
+                                        {errors.clientId && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.clientId}</span>}
                                     </div>
 
                                     <div className="space-y-1.5">
                                         <label className="text-[12px] md:text-[13px] font-medium text-slate-500">
                                             {isEditing ? 'New Password (Leave blank to keep)' : 'Password *'}
                                         </label>
-                                        <input required={!isEditing} type="text" placeholder="Set a secure password" className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-[#00b4d8] outline-none transition-all" 
-                                            value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                                        <input 
+                                            name="password" required={!isEditing} type="text" placeholder="Must include 1 number & 1 symbol" 
+                                            className={getInputClass('password')} 
+                                            value={formData.password} onChange={handleInputChange} 
+                                        />
+                                        {errors.password && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.password}</span>}
                                     </div>
 
                                     <div className="space-y-1.5">
                                         <label className="text-[12px] md:text-[13px] font-medium text-slate-500">Avatar URL <span className="text-slate-400 italic font-normal text-[10px]">(Optional)</span></label>
-                                        <input type="text" placeholder="https://example.com/photo.jpg" className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-[#00b4d8] outline-none transition-all" 
-                                            value={formData.avatar} onChange={e => setFormData({...formData, avatar: e.target.value})} />
+                                        <input 
+                                            name="avatar" type="text" placeholder="https://example.com/photo.jpg" 
+                                            className={getInputClass('avatar')} 
+                                            value={formData.avatar} onChange={handleInputChange} 
+                                        />
                                     </div>
                                 </div>
                             </form>
                         </div>
 
-                        {/* Modal Footer - Fixed at Bottom */}
+                        {/* Modal Footer */}
                         <div className="px-5 md:px-8 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0 rounded-b-xl">
                             <button 
                                 type="button" 
@@ -256,7 +348,7 @@ export default function ClientUsersPage() {
                 </div>
             )}
 
-            {/* 📊 DATA TABLE SECTION: Horizontal Scroll on Mobile */}
+            {/* 📊 DATA TABLE SECTION */}
             <div className="w-full bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
                 {loading ? (
                     <div className="flex flex-col justify-center items-center h-[350px] md:h-[400px] text-slate-400">
@@ -295,13 +387,10 @@ export default function ClientUsersPage() {
                             <tbody className="divide-y divide-slate-50">
                                 {users?.length > 0 ? users.map((u: any) => (
                                     <tr key={u.id} className="hover:bg-slate-50/50 transition-colors group">
-                                        
-                                        {/* Checkbox */}
                                         <td className="p-3 md:p-4 text-center">
                                             <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-cyan-500 cursor-pointer" />
                                         </td>
                                         
-                                        {/* Avatar & Name */}
                                         <td className="p-3 md:p-4 flex items-center gap-2 md:gap-3">
                                             {u.avatar ? (
                                                 <img src={u.avatar} alt={u.fullName} className="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover shrink-0" />
@@ -314,22 +403,18 @@ export default function ClientUsersPage() {
                                             <Star size={12} className="text-slate-300 cursor-pointer hover:text-orange-400 shrink-0 hidden sm:block" />
                                         </td>
                                         
-                                        {/* Client */}
                                         <td className="p-3 md:p-4">
                                             <span className="text-[12px] md:text-[13px] font-medium text-slate-600 hover:text-[#00b4d8] cursor-pointer">
                                                 {u.client?.companyName || 'System'}
                                             </span>
                                         </td>
                                         
-                                        {/* Email */}
                                         <td className="p-3 md:p-4 text-[12px] md:text-[13px] font-light text-slate-500">{u.email}</td>
                                         
-                                        {/* Phone */}
                                         <td className="p-3 md:p-4 text-[12px] md:text-[13px] font-light text-slate-500 hidden sm:table-cell">
                                             {u.phone || '---'}
                                         </td>
                                         
-                                        {/* Status */}
                                         <td className="p-3 md:p-4">
                                             {u.isActive ? (
                                                 <span className="px-2 md:px-3 py-1 bg-green-50 text-green-600 text-[10px] md:text-[11px] font-bold uppercase tracking-wider rounded-md">Active</span>
@@ -338,12 +423,10 @@ export default function ClientUsersPage() {
                                             )}
                                         </td>
 
-                                        {/* Last Seen */}
                                         <td className="p-3 md:p-4 text-[12px] md:text-[13px] font-light text-slate-500 hidden md:table-cell">
                                             {formatLastSeen(u.lastSeen)}
                                         </td>
                                         
-                                        {/* Actions */}
                                         <td className="p-3 md:p-4 pr-4 md:pr-6">
                                             <div className="flex items-center justify-end gap-1.5 md:gap-3 text-slate-400">
                                                 <button onClick={() => handleDelete(u.id, u.fullName)} className="hover:text-red-500 p-1" title="Delete">

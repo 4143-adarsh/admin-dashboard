@@ -92,6 +92,12 @@ export default function AdminKnowledgebasePage() {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentArticles = filteredArticles.slice(indexOfFirstItem, indexOfLastItem);
 
+    // 🔥 Auto-Capitalize Helper
+    const autoCapitalize = (val: string) => {
+        if (!val) return val;
+        return val.charAt(0).toUpperCase() + val.slice(1);
+    };
+
     return (
         <div className="p-2 md:p-6 max-w-[1400px] mx-auto space-y-4 md:space-y-6 bg-slate-50 min-h-screen font-sans relative w-full overflow-hidden">
             
@@ -261,7 +267,7 @@ export default function AdminKnowledgebasePage() {
                                 <div className="space-y-1.5">
                                     <label className="text-[12px] md:text-[13px] text-slate-500 font-medium">Article Title *</label>
                                     <input type="text" required className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-[#00b4d8] focus:ring-1 focus:ring-[#00b4d8] outline-none transition-all"
-                                        value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                                        value={formData.title} onChange={e => setFormData({ ...formData, title: autoCapitalize(e.target.value) })} />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                                     <div className="space-y-1.5">
@@ -285,7 +291,7 @@ export default function AdminKnowledgebasePage() {
                                 <div className="space-y-1.5">
                                     <label className="text-[12px] md:text-[13px] text-slate-500 font-medium">Content Body *</label>
                                     <textarea rows={6} md-rows={8} required className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs md:text-[14px] text-slate-700 font-light focus:border-[#00b4d8] outline-none transition-all resize-none leading-relaxed"
-                                        value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })}></textarea>
+                                        value={formData.content} onChange={e => setFormData({ ...formData, content: autoCapitalize(e.target.value) })}></textarea>
                                 </div>
                             </form>
                         </div>

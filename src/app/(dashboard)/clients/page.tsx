@@ -12,6 +12,9 @@ export default function ClientsExactMatchPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [editingId, setEditingId] = useState<number | null>(null);
 
+    // 🔥 NAYA: Validation errors store karne ke liye state
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     // Table Sorting & UI State
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
     const [starred, setStarred] = useState<number[]>([]);
@@ -45,17 +48,68 @@ export default function ClientsExactMatchPage() {
     const openEditModal = (client: any) => {
         setFormData({ ...client });
         setEditingId(client.id);
+        setErrors({}); // Modal kholte waqt purane errors clear
         setShowModal(true);
     };
 
     const closeModal = () => {
         setShowModal(false);
         setEditingId(null);
+        setErrors({}); // Modal band karte waqt errors clear
         setFormData({ companyName: '', companyEmail: '', companyPhone: '', gstin: '', status: 'Active', accountOwner: '', pendingProjects: 0, totalInvoices: 0, tags: '', category: 'Default' });
     };
 
+    // 🔥 NAYA: Smart Input Change Handler (Formatting aur Validation ke liye)
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        let newValue = value;
+
+        // 1. First Letter Auto Caps
+        if (name === 'companyName' || name === 'accountOwner' || name === 'tags') {
+            newValue = value.charAt(0).toUpperCase() + value.slice(1);
+        } 
+        // 2. Phone Number (Sirf Digits, Max 10)
+        else if (name === 'companyPhone') {
+            newValue = value.replace(/\D/g, '').slice(0, 10);
+        } 
+        // 3. GSTIN (Sirf Alphanumeric, Uppercase, Max 15)
+        else if (name === 'gstin') {
+            newValue = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 15);
+        }
+
+        setFormData({ ...formData, [name]: newValue });
+
+        // Jab user type kare to error hata do
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: '' });
+        }
+    };
+
+    // 🔥 NAYA: Validation Logic before submit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const newErrors: Record<string, string> = {};
+
+        // Validations
+        if (!formData.companyName.trim()) newErrors.companyName = "Company Name is required";
+        if (!formData.companyEmail.trim() || !formData.companyEmail.includes('@')) newErrors.companyEmail = "Valid email is required (must contain @)";
+        
+        // Agar phone dala hai toh exactly 10 digits hona chahiye
+        if (formData.companyPhone && formData.companyPhone.length !== 10) {
+            newErrors.companyPhone = "Mobile number must be exactly 10 digits";
+        }
+        // Agar GSTIN dala hai toh exactly 15 characters hona chahiye
+        if (formData.gstin && formData.gstin.length !== 15) {
+            newErrors.gstin = "GSTIN must be exactly 15 characters";
+        }
+
+        // Agar errors hain toh submit rok do aur red lines show karo
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
         setIsSubmitting(true);
         let res = editingId ? await updateClientAction(editingId, formData) : await createClientAction(formData);
         if (res?.success) { closeModal(); await loadClients(); } 
@@ -127,25 +181,30 @@ export default function ClientsExactMatchPage() {
     const totalInvoicesValue = clients.reduce((acc, curr) => acc + (Number(curr.totalInvoices) || 0), 0);
     const uniqueCategories = ['All', ...Array.from(new Set(clients.map(c => c.category || 'Default')))];
 
+    // 🔥 NAYA: Dynamic styling based on validation error
+    const getInputClass = (fieldName: string, focusColor: string) => {
+        return `w-full p-2 md:p-2.5 border rounded-sm outline-none text-[13px] md:text-sm transition-all ${
+            errors[fieldName] 
+                ? 'border-red-500 focus:border-red-500 bg-red-50/10' 
+                : `border-slate-200 focus:border-[${focusColor}]`
+        }`;
+    };
+
     return (
-        // 🔥 Responsive Wrapper: adjusted paddings for mobile
         <div className="p-3 sm:p-4 md:p-6 bg-[#f4f7f6] min-h-screen font-sans relative w-full overflow-x-hidden">
             
-            {/* 🔝 HEADER SECTION: Responsive Flex Layout */}
+            {/* 🔝 HEADER SECTION */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl text-[#1e88e5] font-light">Clients</h1>
                     <p className="text-[10px] md:text-xs text-slate-400 uppercase tracking-widest mt-1">APP <span className="mx-1">&gt;</span> CLIENTS</p>
                 </div>
                 
-                {/* Responsive Actions Area */}
                 <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
                     <div className="relative flex-grow md:flex-grow-0">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                         <input 
-                            type="text" 
-                            placeholder="Search..." 
-                            value={searchQuery} 
+                            type="text" placeholder="Search..." value={searchQuery} 
                             onChange={(e) => setSearchQuery(e.target.value)} 
                             className="pl-9 pr-4 py-2 border border-slate-200 rounded-sm outline-none focus:border-blue-400 text-sm w-full md:w-48 bg-white" 
                         />
@@ -163,15 +222,15 @@ export default function ClientsExactMatchPage() {
                 </div>
             </div>
 
-            {/* 📊 STATS GRID: 1 col on mobile, 2 on tablet, 4 on desktop */}
+            {/* 📊 STATS GRID */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-0 bg-white p-4 md:p-6 shadow-sm border border-slate-100 mb-6 rounded-md">
                 <div className="px-4 md:px-6 border-b-4 border-[#4db6ac] pb-2"><h2 className="text-2xl md:text-3xl text-slate-700 font-light">{clients.length}</h2><p className="text-slate-400 text-xs md:text-sm mt-1">Clients</p></div>
                 <div className="px-4 md:px-6 border-b-4 border-[#64b5f6] pb-2 sm:border-l border-slate-100"><h2 className="text-2xl md:text-3xl text-slate-700 font-light">{totalProjects}</h2><p className="text-slate-400 text-xs md:text-sm mt-1">Pending Projects</p></div>
-                <div className="px-4 md:px-6 border-b-4 border-[#b39ddb] pb-2 lg:border-l border-slate-100"><h2 className="text-2xl md:text-3xl text-slate-700 font-light">${totalInvoicesValue.toLocaleString()}</h2><p className="text-slate-400 text-xs md:text-sm mt-1">Invoices</p></div>
-                <div className="px-4 md:px-6 border-b-4 border-slate-400 pb-2 sm:border-l border-slate-100"><h2 className="text-2xl md:text-3xl text-slate-700 font-light">$0.00</h2><p className="text-slate-400 text-xs md:text-sm mt-1">Payments</p></div>
+                <div className="px-4 md:px-6 border-b-4 border-[#b39ddb] pb-2 lg:border-l border-slate-100"><h2 className="text-2xl md:text-3xl text-slate-700 font-light">₹{totalInvoicesValue.toLocaleString()}</h2><p className="text-slate-400 text-xs md:text-sm mt-1">Invoices</p></div>
+                <div className="px-4 md:px-6 border-b-4 border-slate-400 pb-2 sm:border-l border-slate-100"><h2 className="text-2xl md:text-3xl text-slate-700 font-light">₹0.00</h2><p className="text-slate-400 text-xs md:text-sm mt-1">Payments</p></div>
             </div>
 
-            {/* 📋 DATA TABLE: Horizontal Scroll on Mobile */}
+            {/* 📋 DATA TABLE */}
             <div className="bg-white shadow-sm border border-slate-100 relative rounded-md w-full overflow-hidden">
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left border-collapse text-[12px] md:text-[13px] text-slate-600 whitespace-nowrap min-w-[800px]">
@@ -202,7 +261,7 @@ export default function ClientsExactMatchPage() {
                                         <span className="text-slate-600">{client.accountOwner || 'Unassigned'}</span>
                                     </td>
                                     <td className="py-3 md:py-4 px-4">{client.pendingProjects}</td>
-                                    <td className="py-3 md:py-4 px-4">${Number(client.totalInvoices).toLocaleString()}</td>
+                                    <td className="py-3 md:py-4 px-4">₹{Number(client.totalInvoices).toLocaleString()}</td>
                                     <td className="py-3 md:py-4 px-4">{client.tags ? <span className="px-2 py-0.5 md:py-1 bg-slate-100 border border-slate-200 text-slate-500 rounded-sm text-[10px] md:text-[11px]">{client.tags}</span> : '-'}</td>
                                     <td className="py-3 md:py-4 px-4 text-slate-400">{client.category}</td>
                                     <td className="py-3 md:py-4 px-4"><span className={`px-2 py-0.5 md:py-1 rounded-sm text-[10px] md:text-[11px] ${client.status === 'Active' ? 'bg-[#e3f2fd] text-[#1e88e5]' : 'bg-slate-100 text-slate-500'}`}>{client.status}</span></td>
@@ -237,23 +296,115 @@ export default function ClientsExactMatchPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                     <div className="space-y-3 md:space-y-4">
                                         <h3 className="text-xs md:text-sm font-bold text-[#1e88e5] uppercase tracking-wider mb-1 md:mb-2">Basic Info</h3>
-                                        <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Company Name *</label><input required value={formData.companyName} onChange={(e) => setFormData({...formData, companyName: e.target.value})} className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#1e88e5] text-[13px] md:text-sm" /></div>
-                                        <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Work Email *</label><input required type="email" value={formData.companyEmail} onChange={(e) => setFormData({...formData, companyEmail: e.target.value})} className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#1e88e5] text-[13px] md:text-sm" /></div>
+                                        
+                                        {/* Company Name */}
+                                        <div>
+                                            <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Company Name *</label>
+                                            <input 
+                                                name="companyName" required 
+                                                value={formData.companyName} onChange={handleInputChange} 
+                                                className={getInputClass('companyName', '#1e88e5')} 
+                                            />
+                                            {errors.companyName && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.companyName}</span>}
+                                        </div>
+                                        
+                                        {/* Email */}
+                                        <div>
+                                            <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Work Email *</label>
+                                            <input 
+                                                name="companyEmail" required type="email" 
+                                                value={formData.companyEmail} onChange={handleInputChange} 
+                                                className={getInputClass('companyEmail', '#1e88e5')} 
+                                            />
+                                            {errors.companyEmail && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.companyEmail}</span>}
+                                        </div>
+                                        
                                         <div className="grid grid-cols-2 gap-3">
-                                            <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Phone</label><input value={formData.companyPhone} onChange={(e) => setFormData({...formData, companyPhone: e.target.value})} className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#1e88e5] text-[13px] md:text-sm" /></div>
-                                            <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">GSTIN</label><input value={formData.gstin} onChange={(e) => setFormData({...formData, gstin: e.target.value})} className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#1e88e5] text-[13px] md:text-sm uppercase" /></div>
+                                            {/* Phone */}
+                                            <div>
+                                                <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Phone (10 digits)</label>
+                                                <input 
+                                                    name="companyPhone" 
+                                                    value={formData.companyPhone} onChange={handleInputChange} 
+                                                    className={getInputClass('companyPhone', '#1e88e5')} 
+                                                    placeholder="9876543210"
+                                                />
+                                                {errors.companyPhone && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.companyPhone}</span>}
+                                            </div>
+                                            
+                                            {/* GSTIN */}
+                                            <div>
+                                                <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">GSTIN</label>
+                                                <input 
+                                                    name="gstin" 
+                                                    value={formData.gstin} onChange={handleInputChange} 
+                                                    className={getInputClass('gstin', '#1e88e5')} 
+                                                    placeholder="15 Characters"
+                                                />
+                                                {errors.gstin && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.gstin}</span>}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="space-y-3 md:space-y-4">
                                         <h3 className="text-xs md:text-sm font-bold text-[#4db6ac] uppercase tracking-wider mb-1 md:mb-2 mt-2 md:mt-0">CRM Details</h3>
-                                        <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Account Owner</label><input value={formData.accountOwner} onChange={(e) => setFormData({...formData, accountOwner: e.target.value})} placeholder="e.g. John Doe" className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#4db6ac] text-[13px] md:text-sm" /></div>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Pending Projects</label><input type="number" value={formData.pendingProjects} onChange={(e) => setFormData({...formData, pendingProjects: Number(e.target.value)})} className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#4db6ac] text-[13px] md:text-sm" /></div>
-                                            <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Total Invoices ($)</label><input type="number" step="0.01" value={formData.totalInvoices} onChange={(e) => setFormData({...formData, totalInvoices: Number(e.target.value)})} className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#4db6ac] text-[13px] md:text-sm" /></div>
+                                        
+                                        {/* Account Owner */}
+                                        <div>
+                                            <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Account Owner</label>
+                                            <input 
+                                                name="accountOwner" 
+                                                value={formData.accountOwner} onChange={handleInputChange} 
+                                                placeholder="e.g. John Doe" 
+                                                className={getInputClass('accountOwner', '#4db6ac')} 
+                                            />
                                         </div>
+                                        
                                         <div className="grid grid-cols-2 gap-3">
-                                            <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Tags (Comma separated)</label><input value={formData.tags} onChange={(e) => setFormData({...formData, tags: e.target.value})} placeholder="e.g. web-design, seo" className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#4db6ac] text-[13px] md:text-sm" /></div>
-                                            <div><label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Status</label><select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full p-2 md:p-2.5 border border-slate-200 rounded-sm outline-none focus:border-[#4db6ac] text-[13px] md:text-sm"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+                                            {/* Pending Projects */}
+                                            <div>
+                                                <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Pending Projects</label>
+                                                <input 
+                                                    name="pendingProjects" type="number" 
+                                                    value={formData.pendingProjects} onChange={handleInputChange} 
+                                                    className={getInputClass('pendingProjects', '#4db6ac')} 
+                                                />
+                                            </div>
+                                            
+                                            {/* Total Invoices */}
+                                            <div>
+                                                <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Total Invoices (₹)</label>
+                                                <input 
+                                                    name="totalInvoices" type="number" step="0.01" 
+                                                    value={formData.totalInvoices} onChange={handleInputChange} 
+                                                    className={getInputClass('totalInvoices', '#4db6ac')} 
+                                                />
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {/* Tags */}
+                                            <div>
+                                                <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Tags (Comma separated)</label>
+                                                <input 
+                                                    name="tags" 
+                                                    value={formData.tags} onChange={handleInputChange} 
+                                                    placeholder="Web, Seo" 
+                                                    className={getInputClass('tags', '#4db6ac')} 
+                                                />
+                                            </div>
+                                            
+                                            {/* Status */}
+                                            <div>
+                                                <label className="text-[11px] md:text-xs text-slate-500 mb-1 block">Status</label>
+                                                <select 
+                                                    name="status" 
+                                                    value={formData.status} onChange={handleInputChange} 
+                                                    className={getInputClass('status', '#4db6ac')}
+                                                >
+                                                    <option value="Active">Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -269,7 +420,7 @@ export default function ClientsExactMatchPage() {
                 </div>
             )}
 
-            {/* 🔍 ADVANCED FILTERS SIDEBAR: Mobile safe width */}
+            {/* 🔍 ADVANCED FILTERS SIDEBAR */}
             {showFilterPanel && (
                 <>
                     <div className="fixed inset-0 bg-slate-900/30 z-40 transition-opacity backdrop-blur-[1px]" onClick={() => setShowFilterPanel(false)}></div>
@@ -302,7 +453,7 @@ export default function ClientsExactMatchPage() {
                 </>
             )}
 
-            {/* 👤 CLIENT PROFILE VIEW SIDEBAR: Responsive scrolling */}
+            {/* 👤 CLIENT PROFILE VIEW SIDEBAR */}
             {viewClientProfile && (
                 <>
                     <div className="fixed inset-0 bg-slate-900/30 z-40 transition-opacity backdrop-blur-[1px]" onClick={() => setViewClientProfile(null)}></div>
@@ -323,7 +474,6 @@ export default function ClientsExactMatchPage() {
                             </div>
                         </div>
 
-                        {/* Scrollable content with padding bottom to prevent hiding behind absolute footer */}
                         <div className="p-5 md:p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1 pb-24">
                             <div>
                                 <h3 className="text-[11px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-2 md:mb-3">Contact Information</h3>
@@ -350,7 +500,7 @@ export default function ClientsExactMatchPage() {
                                     </div>
                                     <div className="bg-white border border-slate-200 p-3 md:p-4 rounded-lg flex flex-col items-center justify-center text-center">
                                         <FileText size={18} className="text-[#b39ddb] mb-1 md:w-5 md:h-5" />
-                                        <span className="text-lg md:text-xl font-light text-slate-700">${Number(viewClientProfile.totalInvoices).toLocaleString()}</span>
+                                        <span className="text-lg md:text-xl font-light text-slate-700">₹{Number(viewClientProfile.totalInvoices).toLocaleString()}</span>
                                         <span className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Invoices</span>
                                     </div>
                                 </div>
@@ -375,7 +525,6 @@ export default function ClientsExactMatchPage() {
                             </div>
                         </div>
 
-                        {/* Sticky Action Buttons */}
                         <div className="absolute bottom-0 left-0 w-full p-4 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
                             <button onClick={() => { setViewClientProfile(null); openEditModal(viewClientProfile); }} className="flex-1 py-2 md:py-2.5 bg-white border border-slate-200 text-slate-600 font-medium rounded-sm hover:bg-slate-100 transition-colors flex items-center justify-center gap-2 text-[13px] md:text-sm">
                                 <Edit size={16}/> Edit Client
@@ -388,7 +537,6 @@ export default function ClientsExactMatchPage() {
                 </>
             )}
 
-            {/* 💬 Floating Chat Button */}
             <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-30">
                 <button onClick={() => alert("Support Chatbot opening...")} className="w-12 h-12 md:w-14 md:h-14 bg-[#64b5f6] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-transform hover:scale-105 active:scale-95">
                     <span className="text-xl md:text-2xl pt-1">💬</span>

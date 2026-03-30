@@ -154,7 +154,11 @@ export default function AdminDocumentsPage() {
                                 type="text" 
                                 value={title}
                                 placeholder="e.g. Q3 Server Invoice"
-                                onChange={(e) => setTitle(e.target.value)}
+                                onChange={(e) => {
+                                    // 🔥 NAYA: Auto Caps Logic
+                                    const capitalized = e.target.value.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+                                    setTitle(capitalized);
+                                }}
                                 className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-[13px] md:text-sm text-slate-700 focus:border-[#00b4d8] outline-none transition-all placeholder:text-slate-300"
                             />
                         </div>

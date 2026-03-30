@@ -95,11 +95,11 @@ export const RevenueChart = () => {
                     <p className="text-[13px] text-gray-400 font-medium uppercase mt-2 tracking-wide">Period</p>
                 </div>
                 <div className="text-center">
-                    <h4 className="text-3xl font-bold text-gray-700">$2,773.75</h4>
+                    <h4 className="text-3xl font-bold text-gray-700">₹2,773.75</h4>
                     <p className="text-[13px] text-gray-400 font-medium uppercase mt-2 tracking-wide">Income</p>
                 </div>
                 <div className="text-center">
-                    <h4 className="text-3xl font-bold text-gray-700">$0.00</h4>
+                    <h4 className="text-3xl font-bold text-gray-700">₹0.00</h4>
                     <p className="text-[13px] text-gray-400 font-medium uppercase mt-2 tracking-wide">Expenses</p>
                 </div>
             </div>

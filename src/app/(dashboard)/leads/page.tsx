@@ -27,6 +27,10 @@ export default function LeadsPage() {
     // --- 🔥 NAYE STATES (Popup Modal ke liye) ---
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // 🔥 Validation Errors Store Karne ke liye
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     const [formData, setFormData] = useState({
         fullName: '', email: '', phone: '', sourcePage: 'Direct', budget: '', message: ''
     });
@@ -68,25 +72,81 @@ export default function LeadsPage() {
         }
     };
 
-    // --- 🔥 NAYA: Add Lead Logic ---
+    // --- 🔥 NAYA: Add Lead Logic with Validation ---
+    
+    // Auto-Caps Logic (Direct function)
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        const capitalized = val.split(' ').map(word => 
+            word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ''
+        ).join(' ');
+        
+        setFormData({ ...formData, fullName: capitalized });
+        if (errors.fullName) setErrors({ ...errors, fullName: '' });
+    };
+
+    // Keyboard Lock (Sirf Number allow honge)
+    const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const isAllowedKey = 
+            /^[0-9]$/.test(e.key) || 
+            ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(e.key) ||
+            e.ctrlKey || e.metaKey;
+
+        if (!isAllowedKey) {
+            e.preventDefault(); 
+        }
+    };
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+        setFormData({ ...formData, phone: val });
+        if (errors.phone) setErrors({ ...errors, phone: '' });
+    };
+
+    // Generic Change Handler for other inputs
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+        if (errors[name]) setErrors({ ...errors, [name]: '' });
     };
 
     const handleAddSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // 🔥 STRICT VALIDATION CHECK
+        const newErrors: Record<string, string> = {};
+
+        if (!formData.fullName.trim()) newErrors.fullName = "Name is required";
+        if (!formData.email.trim() || !formData.email.includes('@')) newErrors.email = "Valid email is required (must contain @)";
+        if (formData.phone && formData.phone.length !== 10) newErrors.phone = "Exactly 10 digits required";
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
         setIsSubmitting(true);
         const res = await createLeadAction(formData);
 
         if (res && res.success) {
             toast.success("Lead created successfully!");
-            setLeads([res.data, ...leads]); // Nayi lead table ke top par daalo
-            setIsModalOpen(false); // Modal band karo
-            setFormData({ fullName: '', email: '', phone: '', sourcePage: 'Direct', budget: '', message: '' }); // Form reset karo
+            setLeads([res.data, ...leads]); 
+            setIsModalOpen(false); 
+            setFormData({ fullName: '', email: '', phone: '', sourcePage: 'Direct', budget: '', message: '' }); 
+            setErrors({}); // Reset errors
         } else {
             toast.error(res?.message || "Failed to create lead");
         }
         setIsSubmitting(false);
+    };
+
+    // Style Helper
+    const getInputClass = (fieldName: string) => {
+        return `w-full px-3 py-2 border rounded text-[13px] focus:outline-none transition-all ${
+            errors[fieldName] 
+                ? 'border-red-500 bg-red-50/10 focus:border-red-500' 
+                : 'border-gray-200 focus:border-[#2cb1c4]'
+        }`;
     };
 
     // --- Existing Formatting & Pagination Logic ---
@@ -115,7 +175,7 @@ export default function LeadsPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
-                    {/* 🔥 Yahan Link hata kar Button laga diya jo Modal open karega */}
+                    {/* 🔥 Modal Open Button */}
                     <button 
                         onClick={() => setIsModalOpen(true)}
                         className="flex items-center justify-center gap-2 px-4 py-2 border border-orange-500 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors text-[13px] font-medium whitespace-nowrap"
@@ -146,7 +206,7 @@ export default function LeadsPage() {
                             <tr className="border-b border-gray-100 text-[#2cb1c4] text-[13px] font-medium">
                                 <th className="px-6 py-4 w-1/4">Lead Info</th>
                                 <th className="px-6 py-4 w-1/4">Contact</th>
-                                <th className="px-6 py-4 w-1/4">Source & Budget</th>
+                                <th className="px-6 py-4 w-1/4">Requirements & Source</th>
                                 <th className="px-6 py-4 w-1/5">Status</th>
                                 <th className="px-6 py-4 w-16 text-center">Actions</th>
                             </tr>
@@ -167,10 +227,14 @@ export default function LeadsPage() {
                                             <div className="text-[12px] text-gray-400">{lead.email}</div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-[13px] text-gray-600 uppercase font-medium tracking-wide mb-0.5">{lead.sourcePage || 'DIRECT'}</div>
-                                            <div className="text-[12px] text-gray-400">{lead.budget ? `Budget: ${lead.budget}` : '-'}</div>
+                                            <div className="text-[13px] text-gray-700 truncate max-w-[220px] mb-1 cursor-help" title={lead.message || 'No requirements'}>
+                                                {lead.message || 'No requirements provided.'}
+                                            </div>
+                                            <div className="flex items-center gap-2 text-[11px] text-gray-400">
+                                                <span className="uppercase font-bold tracking-wider text-[#2cb1c4]">{lead.sourcePage || 'DIRECT'}</span>
+                                                {lead.budget && <span>• Budget: {lead.budget}</span>}
+                                            </div>
                                         </td>
-
                                         <td className="px-6 py-4">
                                             <div className="relative inline-block w-[120px]">
                                                 <select 
@@ -188,12 +252,8 @@ export default function LeadsPage() {
                                                 <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 text-gray-400" />
                                             </div>
                                         </td>
-
                                         <td className="px-6 py-4 text-center">
-                                            <button 
-                                                onClick={() => handleDelete(lead.id)}
-                                                className="text-red-300 hover:text-red-600 transition-all duration-200 p-2 rounded-full hover:bg-red-50"
-                                            >
+                                            <button onClick={() => handleDelete(lead.id)} className="text-red-300 hover:text-red-600 transition-all duration-200 p-2 rounded-full hover:bg-red-50">
                                                 <Trash2 size={18} strokeWidth={1.5} />
                                             </button>
                                         </td>
@@ -232,7 +292,7 @@ export default function LeadsPage() {
                         
                         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                             <h2 className="text-[1.3rem] font-light text-[#2cb1c4] tracking-wide">Add New Lead</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50">
+                            <button onClick={() => { setIsModalOpen(false); setErrors({}); }} className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50">
                                 <X size={20} />
                             </button>
                         </div>
@@ -241,15 +301,38 @@ export default function LeadsPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label className="block text-[12px] font-semibold text-gray-600 mb-1">Full Name <span className="text-red-500">*</span></label>
-                                    <input type="text" name="fullName" required value={formData.fullName} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] focus:outline-none focus:border-[#2cb1c4]" placeholder="John Doe" />
+                                    <input 
+                                        type="text" name="fullName" required 
+                                        value={formData.fullName} 
+                                        onChange={handleNameChange} 
+                                        className={getInputClass('fullName')} 
+                                        placeholder="John Doe" 
+                                    />
+                                    {errors.fullName && <span className="text-[10px] text-red-500 mt-1 block">{errors.fullName}</span>}
                                 </div>
                                 <div>
                                     <label className="block text-[12px] font-semibold text-gray-600 mb-1">Email <span className="text-red-500">*</span></label>
-                                    <input type="email" name="email" required value={formData.email} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] focus:outline-none focus:border-[#2cb1c4]" placeholder="john@example.com" />
+                                    <input 
+                                        type="email" name="email" required 
+                                        value={formData.email} 
+                                        onChange={handleInputChange} 
+                                        className={getInputClass('email')} 
+                                        placeholder="john@example.com" 
+                                    />
+                                    {errors.email && <span className="text-[10px] text-red-500 mt-1 block">{errors.email}</span>}
                                 </div>
                                 <div>
                                     <label className="block text-[12px] font-semibold text-gray-600 mb-1">Phone <span className="text-red-500">*</span></label>
-                                    <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-200 rounded text-[13px] focus:outline-none focus:border-[#2cb1c4]" placeholder="9876543210" />
+                                    <input 
+                                        type="tel" name="phone" required 
+                                        maxLength={10}
+                                        value={formData.phone} 
+                                        onKeyDown={handlePhoneKeyDown}
+                                        onChange={handlePhoneChange} 
+                                        className={getInputClass('phone')} 
+                                        placeholder="9876543210" 
+                                    />
+                                    {errors.phone && <span className="text-[10px] text-red-500 mt-1 block">{errors.phone}</span>}
                                 </div>
                                 <div>
                                     <label className="block text-[12px] font-semibold text-gray-600 mb-1">Source</label>
@@ -274,7 +357,7 @@ export default function LeadsPage() {
                             </div>
 
                             <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2 text-[13px] font-medium text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
+                                <button type="button" onClick={() => { setIsModalOpen(false); setErrors({}); }} className="px-5 py-2 text-[13px] font-medium text-gray-600 border border-gray-200 rounded hover:bg-gray-50">
                                     Cancel
                                 </button>
                                 <button type="submit" disabled={isSubmitting} className="flex items-center gap-2 px-5 py-2 text-[13px] font-medium text-white bg-orange-500 rounded hover:bg-orange-600 disabled:opacity-70">

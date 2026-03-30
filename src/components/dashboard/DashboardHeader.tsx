@@ -259,9 +259,6 @@ export const DashboardHeader = ({ isCollapsed, toggleSidebar }: DashboardHeaderP
                             <Link href="/settings/team" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                                 <Users size={16} /> Team & Roles
                             </Link>
-                            <Link href="/settings/preferences" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-                                <Settings size={16} /> Preferences
-                            </Link>
                         </div>
                     )}
                 </div>

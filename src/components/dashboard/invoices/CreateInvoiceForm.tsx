@@ -13,7 +13,15 @@ export default function CreateInvoiceForm() {
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        let newValue = value;
+
+        // 🔥 NAYA: Auto Caps for Client Name and Service Name
+        if (name === 'clientName' || name === 'serviceName') {
+            newValue = newValue.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+        }
+
+        setFormData({ ...formData, [name]: newValue });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
