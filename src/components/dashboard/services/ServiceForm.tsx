@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Plus, Trash2, Settings, LayoutTemplate, Shield, Lightbulb, Briefcase, Cpu, Target, CheckCircle, Megaphone, X } from "lucide-react";
+// 🔥 Naye icons CreditCard aur Check add kiye hain Pricing UI ke liye
+import { Save, Plus, Trash2, Settings, LayoutTemplate, Shield, Lightbulb, Briefcase, Cpu, Target, CheckCircle, Megaphone, X, CreditCard, Check, Sparkles, Minus } from "lucide-react";
 import Link from "next/link";
 
 // 🚀 FIXED: API Actions ab imported hain
@@ -12,7 +13,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // 🚀 100% SYNCED WITH YOUR SCHEMA AND JSON DATA (NO LOGIC CHANGED)
+  // 🚀 100% SYNCED WITH YOUR SCHEMA AND JSON DATA
   const [formData, setFormData] = useState(
     initialData || {
       // 1. Core Settings
@@ -23,38 +24,38 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
       // 2. Hero
       heroTitle: "", heroSubtitle: "", heroImage: "",
 
-      // 3. Stats (Array of {v, l, d})
+      // 3. Stats
       statsTitle: "", statsSubtitle: "", statsList: [],
 
-      // 4. Capabilities (Array of {t, d, backTitle, points: []})
+      // 4. Capabilities
       capabilitiesTitle: "", capabilitiesSubtitle: "", capabilitiesList: [],
 
-      // 5. Architecture (Array of Strings)
+      // 5. Architecture
       architectureTitle: "", architectureSubtitle: "", architectureList: [],
 
-      // 6. Use Cases (Array of {title, desc})
+      // 6. Use Cases
       useCasesTitle: "", useCasesSubtitle: "", useCasesList: [],
 
-      // 7. Philosophy (Array of {p, d})
+      // 7. Philosophy
       philosophyTitle: "", philosophyList: [],
 
-      // 8. Security (Array of {t, d})
+      // 8. Security
       securityTitle: "", securityList: [],
 
-      // 9. Challenges (Array of {t, d})
+      // 9. Challenges
       challengeTitle: "", challengeSubtitle: "", challengesList: [],
 
       // 10. CTA Section
       ctaTitle: "", ctaSubtitle: "", ctaButtonText: "",
 
-      // 11. Pricing (Optional based on schema)
-      essentialPrice: 0, essentialFeatures: [],
-      premiumPrice: 0, premiumFeatures: [],
-      enterprisePrice: "Custom", enterpriseFeatures: []
+      // 🔥 11. PRICING (UPDATED TO MATCH NEW JSON)
+      pricingTitle: "", 
+      pricingSubtitle: "", 
+      pricingPlans: [] // Array of Objects (with nested features)
     }
   );
 
-  // --- HANDLERS (NO LOGIC CHANGED) ---
+  // --- STANDARD HANDLERS ---
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
@@ -83,7 +84,40 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
     setFormData({ ...formData, [field]: newArray });
   };
 
-  // --- SUBMIT LOGIC (NO LOGIC CHANGED) ---
+  // 🔥 NESTED HANDLERS FOR PRICING PLANS 🔥
+  const handlePlanChange = (planIndex: number, field: string, value: any) => {
+    const newPlans = [...formData.pricingPlans];
+    newPlans[planIndex] = { ...newPlans[planIndex], [field]: value };
+    setFormData({ ...formData, pricingPlans: newPlans });
+  };
+
+  const removePlan = (planIndex: number) => {
+    const newPlans = [...formData.pricingPlans];
+    newPlans.splice(planIndex, 1);
+    setFormData({ ...formData, pricingPlans: newPlans });
+  };
+
+  const addFeatureToPlan = (planIndex: number) => {
+    const newPlans = [...formData.pricingPlans];
+    if (!newPlans[planIndex].features) newPlans[planIndex].features = [];
+    newPlans[planIndex].features.push({ name: '', detail: '', included: true, isAI: false });
+    setFormData({ ...formData, pricingPlans: newPlans });
+  };
+
+  const handleFeatureChange = (planIndex: number, featureIndex: number, field: string, value: any) => {
+    const newPlans = [...formData.pricingPlans];
+    newPlans[planIndex].features[featureIndex] = { ...newPlans[planIndex].features[featureIndex], [field]: value };
+    setFormData({ ...formData, pricingPlans: newPlans });
+  };
+
+  const removeFeatureFromPlan = (planIndex: number, featureIndex: number) => {
+    const newPlans = [...formData.pricingPlans];
+    newPlans[planIndex].features.splice(featureIndex, 1);
+    setFormData({ ...formData, pricingPlans: newPlans });
+  };
+
+
+  // --- SUBMIT LOGIC ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -103,7 +137,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
 
       if (res?.success) {
         alert(`Service ${isEdit ? 'Updated' : 'Created'} Successfully! 🚀`);
-        router.push("/services"); // Save hone ke baad table par wapas bhej dega
+        router.push("/services"); 
       } else {
         alert("Error: " + (res?.error || "Database mein save nahi hua."));
       }
@@ -116,16 +150,13 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
   };
 
   return (
-    // 🔥 UI UPGRADED TO MATCH SCREENSHOT MODAL STYLE
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 transition-opacity duration-300">
       
-      {/* Dark Background Overlay */}
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
 
-      {/* Form Modal Container */}
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl flex flex-col max-h-[95vh] relative z-10 animate-in zoom-in-95 duration-200 font-sans">
 
-        {/* 🔥 MODAL HEADER (Fixed at Top) */}
+        {/* MODAL HEADER */}
         <div className="flex justify-between items-center px-6 md:px-8 py-5 border-b border-slate-100 shrink-0 bg-white rounded-t-xl">
           <h2 className="text-[20px] font-semibold text-slate-800">
             {isEdit ? "Update Service Details" : "Add New Service"}
@@ -135,7 +166,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
           </Link>
         </div>
 
-        {/* 🔥 MODAL SCROLLABLE BODY */}
+        {/* MODAL SCROLLABLE BODY */}
         <div className="overflow-y-auto flex-grow bg-white custom-scrollbar">
           <form id="serviceForm" onSubmit={handleSubmit} className="flex flex-col h-full">
 
@@ -206,7 +237,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
                 </div>
               </div>
 
-              {/* 3. CHALLENGES ({t, d}) */}
+              {/* 3. CHALLENGES */}
               <div>
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-4">
                   <h3 className="text-[#00b4d8] text-[13px] font-bold tracking-wider uppercase flex items-center gap-2">
@@ -235,7 +266,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
                 </div>
               </div>
 
-              {/* 4. ARCHITECTURE (Strings) */}
+              {/* 4. ARCHITECTURE */}
               <div>
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-4">
                   <h3 className="text-[#3ed4b2] text-[13px] font-bold tracking-wider uppercase flex items-center gap-2">
@@ -262,7 +293,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
                 </div>
               </div>
 
-              {/* 5. STATS ({v, l, d}) */}
+              {/* 5. STATS */}
               <div>
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-4">
                   <h3 className="text-[#00b4d8] text-[13px] font-bold tracking-wider uppercase flex items-center gap-2">
@@ -290,7 +321,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
                 </div>
               </div>
 
-              {/* 6. CAPABILITIES ({t, d, backTitle, points}) */}
+              {/* 6. CAPABILITIES */}
               <div>
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-4">
                   <h3 className="text-[#3ed4b2] text-[13px] font-bold tracking-wider uppercase flex items-center gap-2">
@@ -332,7 +363,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
                 </div>
               </div>
 
-              {/* 7. USE CASES ({title, desc}) */}
+              {/* 7. USE CASES */}
               <div>
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-4">
                   <h3 className="text-[#00b4d8] text-[13px] font-bold tracking-wider uppercase flex items-center gap-2">
@@ -359,7 +390,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
                 </div>
               </div>
 
-              {/* 8. PHILOSOPHY ({p, d}) & 9. SECURITY ({t, d}) */}
+              {/* 8. PHILOSOPHY & 9. SECURITY */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 {/* PHILOSOPHY */}
@@ -412,7 +443,7 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
 
               </div>
 
-              {/* 10. CTA SECTION (Made clean and consistent) */}
+              {/* 10. CTA SECTION */}
               <div className="bg-slate-50/50 p-6 rounded-xl border border-slate-100">
                 <h3 className="text-slate-600 text-[13px] font-bold tracking-wider uppercase mb-4 border-b border-slate-200 pb-2 flex items-center gap-2">
                   <Megaphone size={16} /> 10. Call to Action (CTA)
@@ -433,21 +464,130 @@ export default function ServiceForm({ initialData = null, isEdit = false }: { in
                 </div>
               </div>
 
+
+              {/* 🔥 11. PRICING PLANS SECTION (NEW DYNAMIC UI) 🔥 */}
+              <div className="bg-[#f8fafc] p-6 rounded-xl border border-slate-200 shadow-inner">
+                <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-6">
+                  <h3 className="text-[#5c2d91] text-[15px] font-bold tracking-wider uppercase flex items-center gap-2">
+                    <CreditCard size={18} /> 11. Pricing Plans & Features
+                  </h3>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                        const newPlan = { id: Date.now().toString(), name: '', price: '', originalPrice: '', billingCycle: '', description: '', isPopular: false, btnText: 'Get Started', features: [] };
+                        setFormData({ ...formData, pricingPlans: [...(formData.pricingPlans || []), newPlan] });
+                    }} 
+                    className="px-4 py-2 bg-white border border-slate-300 text-[#5c2d91] font-bold rounded-lg text-[13px] hover:bg-slate-50 hover:border-[#5c2d91] transition-all flex items-center gap-1 shadow-sm"
+                  >
+                    <Plus size={16} /> Add New Plan
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="space-y-1.5">
+                    <label className="text-[13px] text-slate-600 font-medium">Pricing Section Title</label>
+                    <input type="text" name="pricingTitle" value={formData.pricingTitle || ""} onChange={handleChange} placeholder="e.g. Choose your growth plan" className="w-full p-2.5 bg-white border border-slate-300 rounded text-sm text-slate-800 focus:border-[#5c2d91] focus:ring-1 focus:ring-[#5c2d91] outline-none" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[13px] text-slate-600 font-medium">Pricing Section Subtitle</label>
+                    <input type="text" name="pricingSubtitle" value={formData.pricingSubtitle || ""} onChange={handleChange} placeholder="e.g. Transparent pricing tailored for you." className="w-full p-2.5 bg-white border border-slate-300 rounded text-sm text-slate-800 focus:border-[#5c2d91] focus:ring-1 focus:ring-[#5c2d91] outline-none" />
+                  </div>
+                </div>
+
+                {/* PLANS LOOP */}
+                <div className="space-y-6">
+                  {formData.pricingPlans?.map((plan: any, pIndex: number) => (
+                    <div key={pIndex} className={`bg-white border ${plan.isPopular ? 'border-[#5c2d91] shadow-md' : 'border-slate-300'} rounded-xl p-5 relative transition-all`}>
+                      
+                      {/* Plan Header */}
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-4">
+                           <h4 className="font-bold text-lg text-slate-800">Plan #{pIndex + 1}</h4>
+                           <label className="flex items-center gap-1.5 text-[13px] font-medium text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-slate-200 transition-colors">
+                              <input type="checkbox" checked={plan.isPopular} onChange={(e) => handlePlanChange(pIndex, 'isPopular', e.target.checked)} className="w-4 h-4 rounded text-[#5c2d91] cursor-pointer" />
+                              🌟 Mark as Popular
+                           </label>
+                        </div>
+                        <button type="button" onClick={() => removePlan(pIndex)} className="text-slate-400 hover:text-red-500 bg-slate-50 hover:bg-red-50 p-2 rounded-lg transition-colors">
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+
+                      {/* Plan Basic Details Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <input type="text" value={plan.name} onChange={(e) => handlePlanChange(pIndex, 'name', e.target.value)} placeholder="Plan Name (e.g. Premium)" className="p-2.5 border border-slate-200 rounded text-sm" />
+                        <input type="text" value={plan.price} onChange={(e) => handlePlanChange(pIndex, 'price', e.target.value)} placeholder="Price (e.g. 49,999 or Custom)" className="p-2.5 border border-slate-200 rounded text-sm font-bold text-slate-800" />
+                        <input type="text" value={plan.originalPrice} onChange={(e) => handlePlanChange(pIndex, 'originalPrice', e.target.value)} placeholder="Original Price (Crossed out)" className="p-2.5 border border-slate-200 rounded text-sm line-through text-slate-500" />
+                        <input type="text" value={plan.billingCycle} onChange={(e) => handlePlanChange(pIndex, 'billingCycle', e.target.value)} placeholder="Billing Cycle (e.g. per month)" className="p-2.5 border border-slate-200 rounded text-sm" />
+                        <input type="text" value={plan.btnText} onChange={(e) => handlePlanChange(pIndex, 'btnText', e.target.value)} placeholder="Button Text" className="p-2.5 border border-slate-200 rounded text-sm" />
+                        <input type="text" value={plan.description} onChange={(e) => handlePlanChange(pIndex, 'description', e.target.value)} placeholder="Short Description" className="p-2.5 border border-slate-200 rounded text-sm md:col-span-3" />
+                      </div>
+
+                      {/* Plan Features Loop */}
+                      <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <div className="flex justify-between items-center mb-3">
+                          <h5 className="font-semibold text-slate-700 text-sm">Features for {plan.name || `Plan #${pIndex + 1}`}</h5>
+                          <button type="button" onClick={() => addFeatureToPlan(pIndex)} className="text-[12px] font-bold text-[#00b4d8] hover:text-[#008ba8] flex items-center gap-1 bg-white px-2 py-1 rounded shadow-sm border border-slate-200">
+                            <Plus size={12} /> Add Feature
+                          </button>
+                        </div>
+
+                        <div className="space-y-2">
+                          {plan.features?.map((feat: any, fIndex: number) => (
+                            <div key={fIndex} className="flex flex-col md:flex-row items-center gap-3 bg-white p-2.5 rounded border border-slate-200">
+                              
+                              {/* Toggles (Included / AI) */}
+                              <div className="flex gap-2 shrink-0 self-start md:self-center">
+                                <label className="cursor-pointer" title="Feature is included?">
+                                  <div className={`w-8 h-8 rounded flex items-center justify-center border transition-colors ${feat.included ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-100 border-slate-200 text-slate-400'}`}>
+                                    <input type="checkbox" className="hidden" checked={feat.included} onChange={(e) => handleFeatureChange(pIndex, fIndex, 'included', e.target.checked)} />
+                                    {feat.included ? <Check size={16} /> : <Minus size={16} />}
+                                  </div>
+                                </label>
+                                <label className="cursor-pointer" title="Is this an AI feature? (Shows sparkle)">
+                                  <div className={`w-8 h-8 rounded flex items-center justify-center border transition-colors ${feat.isAI ? 'bg-purple-50 border-purple-200 text-purple-600' : 'bg-slate-100 border-slate-200 text-slate-400'}`}>
+                                    <input type="checkbox" className="hidden" checked={feat.isAI || false} onChange={(e) => handleFeatureChange(pIndex, fIndex, 'isAI', e.target.checked)} />
+                                    <Sparkles size={16} />
+                                  </div>
+                                </label>
+                              </div>
+
+                              {/* Text Inputs */}
+                              <input type="text" value={feat.name} onChange={(e) => handleFeatureChange(pIndex, fIndex, 'name', e.target.value)} placeholder="Feature Name" className={`flex-1 p-2 border border-slate-200 rounded text-sm ${!feat.included && 'text-slate-400 line-through'}`} />
+                              <input type="text" value={feat.detail} onChange={(e) => handleFeatureChange(pIndex, fIndex, 'detail', e.target.value)} placeholder="Tooltip Detail Description" className="flex-1 p-2 border border-slate-200 rounded text-sm text-slate-600" />
+                              
+                              <button type="button" onClick={() => removeFeatureFromPlan(pIndex, fIndex)} className="text-slate-400 hover:text-red-500 p-1 shrink-0 self-start md:self-center">
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          ))}
+                          {(!plan.features || plan.features.length === 0) && (
+                            <div className="text-center py-4 text-slate-400 text-sm italic">No features added to this plan yet.</div>
+                          )}
+                        </div>
+                      </div>
+
+                    </div>
+                  ))}
+                  
+                  {(!formData.pricingPlans || formData.pricingPlans.length === 0) && (
+                    <div className="text-center py-10 bg-white rounded-xl border border-dashed border-slate-300">
+                      <CreditCard size={40} className="mx-auto text-slate-300 mb-3" />
+                      <p className="text-slate-500 font-medium">No pricing plans added. Click "Add New Plan" above to create one.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* 🔥 PRICING SECTION END 🔥 */}
+
             </div>
 
-            {/* 🔥 MODAL FOOTER (Fixed at Bottom) */}
+            {/* MODAL FOOTER */}
             <div className="px-6 md:px-8 py-5 border-t border-slate-100 bg-slate-50/80 flex justify-end gap-3 shrink-0 rounded-b-xl">
-              <Link 
-                href="/services" 
-                className="px-6 py-2.5 border border-slate-200 bg-white text-slate-600 rounded text-[14px] font-medium hover:bg-slate-50 hover:text-slate-800 transition-colors"
-              >
+              <Link href="/services" className="px-6 py-2.5 border border-slate-200 bg-white text-slate-600 rounded text-[14px] font-medium hover:bg-slate-50 hover:text-slate-800 transition-colors">
                 Cancel
               </Link>
-              <button 
-                type="submit" 
-                disabled={isLoading} 
-                className="px-6 py-2.5 bg-[#0e8bf1] text-white rounded text-[14px] font-medium hover:bg-[#0b73c9] transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-              >
+              <button type="submit" disabled={isLoading} className="px-6 py-2.5 bg-[#0e8bf1] text-white rounded text-[14px] font-medium hover:bg-[#0b73c9] transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
                 {isLoading ? "Saving..." : <><Save size={16} /> {isEdit ? "Update Service" : "Save Service"}</>}
               </button>
             </div>

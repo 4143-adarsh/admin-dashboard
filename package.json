@@ -17,6 +17,7 @@
         "js-cookie": "^3.0.5",
         "lucide-react": "^0.400.0",
         "next": "latest",
+        "nodemailer": "^8.0.4",
         "react": "latest",
         "react-dom": "latest",
         "react-hook-form": "^7.50.0",

@@ -54,8 +54,14 @@ const menuItems: MenuItem[] = [
                 name: 'Home Page',
                 subItems: [
                     { name: 'Client Logos', href: '/sliders' },
-                    { name: 'Services', href: '/services' },
-                    { name: 'Career', href: '/career' }
+                    { name: 'Services', href: '/services' }
+                ]
+            },
+            {
+                name: 'Career Section',
+                subItems: [
+                    { name: 'Job Queries', href: '/career' },
+                    { name: 'Job Postings', href: '/career/jobpostings' }
                 ]
             }
         ]
