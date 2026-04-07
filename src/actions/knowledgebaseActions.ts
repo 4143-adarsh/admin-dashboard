@@ -1,6 +1,18 @@
 "use server";
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from 'next/cache';
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
 
 // 🔥 DYNAMIC API URL (Local vs Production)
 const getBaseUrl = () => {
@@ -15,7 +27,7 @@ const API_URL = `${getBaseUrl()}/api/support/knowledgebase`;
 // 1. Get All Articles (Admin)
 export async function getAdminArticlesAction() {
     try {
-        const res = await fetch(`${API_URL}/admin`, {
+        const res = await fetchWithToken(`${API_URL}/admin`, {
             cache: "no-store"
         });
         return await res.json();
@@ -28,7 +40,7 @@ export async function getAdminArticlesAction() {
 // 2. Get Single Article (For Editing)
 export async function getArticleByIdAction(id: number) {
     try {
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await fetchWithToken(`${API_URL}/${id}`, {
             cache: "no-store"
         });
         return await res.json();
@@ -40,7 +52,7 @@ export async function getArticleByIdAction(id: number) {
 // 3. Create Article
 export async function createArticleAction(data: { title: string, content: string, category: string, isActive: boolean }) {
     try {
-        const res = await fetch(API_URL, {
+        const res = await fetchWithToken(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -59,7 +71,7 @@ export async function createArticleAction(data: { title: string, content: string
 // 4. Update Article
 export async function updateArticleAction(id: number, data: { title?: string, content?: string, category?: string, isActive?: boolean }) {
     try {
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await fetchWithToken(`${API_URL}/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -78,7 +90,7 @@ export async function updateArticleAction(id: number, data: { title?: string, co
 // 5. Delete Article
 export async function deleteArticleAction(id: number) {
     try {
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await fetchWithToken(`${API_URL}/${id}`, {
             method: "DELETE",
         });
 

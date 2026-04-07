@@ -1,5 +1,18 @@
-// File: actions/services.ts (Admin Panel)
 "use server";
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
+// File: actions/services.ts (Admin Panel)
+
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from 'next/cache';
 
@@ -26,7 +39,7 @@ async function handleResponse(res: Response) {
 // 1. Fetch all services (Table ke liye)
 export async function getServices() {
   try {
-    const res = await fetch(API_URL, { cache: 'no-store' });
+    const res = await fetchWithToken(API_URL, { cache: 'no-store' });
     const data = await res.json();
     return data.success ? data.data : [];
   } catch (error) {
@@ -38,7 +51,7 @@ export async function getServices() {
 // 2. Delete a single service
 export async function deleteService(id: number) {
   try {
-    const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    const res = await fetchWithToken(`${API_URL}/${id}`, { method: 'DELETE' });
     const data = await handleResponse(res);
     if (data.success) {
         revalidatePath('/services');
@@ -54,7 +67,7 @@ export async function deleteService(id: number) {
 // 3. Toggle Quick Update (New Tag, Home Toggle etc.)
 export async function updateServiceToggle(id: number, updateData: any) {
   try {
-    const res = await fetch(`${API_URL}/${id}`, {
+    const res = await fetchWithToken(`${API_URL}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updateData),
@@ -73,7 +86,7 @@ export async function updateServiceToggle(id: number, updateData: any) {
 // 4. Create a new service (Pricing data ab isme include hoga)
 export async function createService(serviceData: any) {
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetchWithToken(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(serviceData),
@@ -93,7 +106,7 @@ export async function createService(serviceData: any) {
 // 5. Fetch a SINGLE service by ID (Edit page pre-fill ke liye)
 export async function getServiceById(id: number) {
   try {
-    const res = await fetch(`${API_URL}/${id}`, { cache: 'no-store' });
+    const res = await fetchWithToken(`${API_URL}/${id}`, { cache: 'no-store' });
     const data = await handleResponse(res);
     return data.success ? data.data : null;
   } catch (error) {
@@ -105,7 +118,7 @@ export async function getServiceById(id: number) {
 // 6. Update Full Service (Pricing Plans ab database mein jayenge)
 export async function updateService(id: number, serviceData: any) {
   try {
-    const res = await fetch(`${API_URL}/${id}`, {
+    const res = await fetchWithToken(`${API_URL}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(serviceData),

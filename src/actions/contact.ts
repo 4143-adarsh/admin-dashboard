@@ -1,6 +1,18 @@
 "use server";
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from "next/cache";
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
 
 const getBaseUrl = () => {
     if (process.env.NODE_ENV === "development") {
@@ -17,7 +29,7 @@ const API_URL = getBaseUrl();
 
 export async function getContactsAction() {
     try {
-        const response = await fetch(`${API_URL}/api/contact`, {
+        const response = await fetchWithToken(`${API_URL}/api/contact`, {
             method: "GET",
             headers: { "Cache-Control": "no-cache" },
             cache: "no-store",
@@ -54,7 +66,7 @@ export async function getContactsAction() {
 
 export async function updateContactStatusAction(id: number, payload: { status: string }) {
     try {
-        const response = await fetch(`${API_URL}/api/contact/${id}`, {
+        const response = await fetchWithToken(`${API_URL}/api/contact/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -72,7 +84,7 @@ export async function updateContactStatusAction(id: number, payload: { status: s
 
 export async function deleteContactAction(id: number) {
     try {
-        const response = await fetch(`${API_URL}/api/contact/${id}`, {
+        const response = await fetchWithToken(`${API_URL}/api/contact/${id}`, {
             method: "DELETE",
         });
 
@@ -88,7 +100,7 @@ export async function deleteContactAction(id: number) {
 
 export async function bulkDeleteContactsAction(ids: number[]) {
     try {
-        const response = await fetch(`${API_URL}/api/contact/DeleteMultiple`, {
+        const response = await fetchWithToken(`${API_URL}/api/contact/DeleteMultiple`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ids }),

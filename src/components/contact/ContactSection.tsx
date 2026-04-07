@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  Trash2, Search, RefreshCw, Mail, Phone, Clock, 
-  MapPin, Loader2, Download, ChevronLeft, ChevronRight, 
-  ArrowUpDown, MessageSquare, ChevronDown 
+import {
+  Trash2, Search, RefreshCw, Mail, Phone, Clock,
+  MapPin, Loader2, Download, ChevronLeft, ChevronRight,
+  ArrowUpDown, MessageSquare, ChevronDown
 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import { getContactsAction, updateContactStatusAction, deleteContactAction, bulkDeleteContactsAction } from "@/actions/contact";
@@ -145,8 +145,8 @@ export default function ContactLeadsTable() {
 
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
           {selectedIds.length > 0 && (
-            <button 
-              onClick={handleBulkDelete} 
+            <button
+              onClick={handleBulkDelete}
               className="bg-red-50 text-red-600 px-4 py-2 rounded-md text-[13px] font-medium hover:bg-red-100 flex items-center gap-2 border border-red-200 transition-colors shadow-sm h-9"
             >
               <Trash2 size={15} className="stroke-[1.5]" /> Delete ({selectedIds.length})
@@ -171,8 +171,8 @@ export default function ContactLeadsTable() {
             />
           </div>
 
-          <button 
-            onClick={loadData} 
+          <button
+            onClick={loadData}
             className="p-2 bg-white border border-slate-200 shadow-sm rounded-md text-slate-400 hover:text-[#00b4d8] transition-colors h-9 flex items-center justify-center"
             title="Refresh Data"
           >
@@ -188,18 +188,21 @@ export default function ContactLeadsTable() {
             <thead>
               <tr className="border-b border-slate-100 text-[13px] text-[#00b4d8] tracking-wide bg-slate-50/50">
                 <th className="p-3 w-12 font-medium">
-                  <input 
-                    type="checkbox" 
-                    checked={currentLeads.length > 0 && selectedIds.length === currentLeads.length} 
-                    onChange={toggleSelectAll} 
-                    className="w-4 h-4 rounded border-slate-300 text-cyan-500 cursor-pointer" 
+                  <input
+                    type="checkbox"
+                    checked={currentLeads.length > 0 && selectedIds.length === currentLeads.length}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 rounded border-slate-300 text-cyan-500 cursor-pointer"
                   />
                 </th>
                 <th className="p-3 font-medium cursor-pointer">
                   Lead Details <ArrowUpDown size={12} className="inline ml-1 opacity-60" />
                 </th>
                 <th className="p-3 font-medium cursor-pointer hidden md:table-cell">
-                  Message & Source
+                  Message
+                </th>
+                <th className="p-3 font-medium cursor-pointer hidden md:table-cell">
+                  Source
                 </th>
                 <th className="p-3 font-medium cursor-pointer">
                   Status
@@ -207,11 +210,11 @@ export default function ContactLeadsTable() {
                 <th className="p-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
-            
+
             <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="p-12 text-center">
+                  <td colSpan={6} className="p-12 text-center">
                     <div className="flex flex-col items-center justify-center text-slate-400">
                       <Loader2 className="animate-spin mb-3 text-[#00b4d8]" size={28} />
                       <p className="text-sm font-medium">Fetching leads...</p>
@@ -220,7 +223,7 @@ export default function ContactLeadsTable() {
                 </tr>
               ) : currentLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-12 text-center">
+                  <td colSpan={6} className="p-12 text-center">
                     <div className="flex flex-col items-center justify-center text-slate-400">
                       <MessageSquare size={40} className="text-slate-200 mb-3 stroke-[1.5]" />
                       <p className="text-base font-medium text-slate-600">No leads found</p>
@@ -231,11 +234,11 @@ export default function ContactLeadsTable() {
                 currentLeads.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="p-3 align-middle">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedIds.includes(item.id)} 
-                        onChange={() => toggleSelect(item.id)} 
-                        className="w-4 h-4 rounded border-slate-300 text-cyan-500 cursor-pointer" 
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(item.id)}
+                        onChange={() => toggleSelect(item.id)}
+                        className="w-4 h-4 rounded border-slate-300 text-cyan-500 cursor-pointer"
                       />
                     </td>
                     <td className="p-3">
@@ -249,6 +252,8 @@ export default function ContactLeadsTable() {
                       <p className="text-[12px] text-slate-600 line-clamp-1" title={item.message}>
                         {item.message || <span className="italic text-slate-300">No message</span>}
                       </p>
+                    </td>
+                    <td className="p-3 hidden md:table-cell max-w-xs whitespace-normal">
                       <div className="text-[9px] font-semibold text-slate-400 uppercase tracking-tighter">
                         {item.sourcePage || "Direct"}
                       </div>
@@ -261,7 +266,7 @@ export default function ContactLeadsTable() {
                           className={`appearance-none w-full outline-none border cursor-pointer pl-2 pr-6 py-1 rounded text-[10px] font-semibold uppercase tracking-wider
                             ${item.status === 'Closed' ? 'bg-green-50 text-green-600 border-green-200' :
                               item.status === 'Contacted' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                              'bg-sky-50 text-[#00b4d8] border-sky-100'}
+                                'bg-sky-50 text-[#00b4d8] border-sky-100'}
                           `}
                         >
                           <option value="New">New</option>
@@ -272,8 +277,8 @@ export default function ContactLeadsTable() {
                       </div>
                     </td>
                     <td className="p-3 text-right">
-                      <button 
-                        onClick={() => handleDelete(item.id)} 
+                      <button
+                        onClick={() => handleDelete(item.id)}
                         className="text-slate-300 hover:text-red-500 transition-colors p-1"
                       >
                         <Trash2 size={16} className="stroke-[1.5]" />

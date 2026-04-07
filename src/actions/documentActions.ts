@@ -1,6 +1,18 @@
 'use server'
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from 'next/cache';
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
 
 // 🔥 DYNAMIC API URL (Sirf Base Domain dega, bina '/api' ke)
 const getBaseUrl = () => {
@@ -25,7 +37,7 @@ const API_URL = getBaseUrl();
 export async function uploadDocumentAction(formData: FormData) {
     try {
         // Explicitly '/api/documents/upload' likha hai
-        const res = await fetch(`${API_URL}/api/documents/upload`, {
+        const res = await fetchWithToken(`${API_URL}/api/documents/upload`, {
             method: 'POST',
             // 🚨 CRITICAL: 'Content-Type' header yahan nahi likhna hai.
             // Browser apne aap boundary ke saath 'multipart/form-data' set kar dega.
@@ -45,7 +57,7 @@ export async function uploadDocumentAction(formData: FormData) {
 // ==========================================
 export async function getAllDocumentsAction() {
     try {
-        const res = await fetch(`${API_URL}/api/documents/all`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/documents/all`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { return { success: false, message: error.message }; }
 }
@@ -55,7 +67,7 @@ export async function getAllDocumentsAction() {
 // ==========================================
 export async function deleteDocumentAction(id: string | number) {
     try {
-        const res = await fetch(`${API_URL}/api/documents/${id}`, { method: 'DELETE', cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/documents/${id}`, { method: 'DELETE', cache: 'no-store' });
         const result = await res.json();
         if (result.success) revalidatePath('/documents');
         return result;
@@ -67,7 +79,7 @@ export async function deleteDocumentAction(id: string | number) {
 // ==========================================
 export async function updateDocumentAction(id: string | number, data: { title: string }) {
     try {
-        const res = await fetch(`${API_URL}/api/documents/${id}`, {
+        const res = await fetchWithToken(`${API_URL}/api/documents/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -84,7 +96,7 @@ export async function updateDocumentAction(id: string | number, data: { title: s
 // ==========================================
 export async function getDocumentByIdAction(id: string | number) {
     try {
-        const res = await fetch(`${API_URL}/api/documents/${id}`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/documents/${id}`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { return { success: false, message: error.message }; }
 }
@@ -94,7 +106,7 @@ export async function getDocumentByIdAction(id: string | number) {
 // ==========================================
 export async function getDocumentsByClientAction(clientId: string | number) {
     try {
-        const res = await fetch(`${API_URL}/api/documents/client/${clientId}`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/documents/client/${clientId}`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { return { success: false, message: error.message }; }
 }
@@ -102,7 +114,7 @@ export async function getDocumentsByClientAction(clientId: string | number) {
 // Client Dropdown fetcher - Perfect ✅
 export async function getClientsForDropdownAction() {
     try {
-        const res = await fetch(`${API_URL}/api/clients/all`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/clients/all`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { return { success: false, message: error.message }; }
 }

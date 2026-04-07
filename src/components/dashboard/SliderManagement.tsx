@@ -6,6 +6,10 @@ import {
     X, ArrowUpDown, CheckCircle2, AlertCircle,
     ChevronLeft, ChevronRight
 } from 'lucide-react';
+import { 
+    fetchSlidersAction, addSliderAction, updateSliderAction, 
+    deleteSliderAction, bulkDeleteSlidersAction 
+} from '@/actions/sliderActions';
 
 export default function SliderManagement() {
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -41,11 +45,9 @@ export default function SliderManagement() {
     const [imageFile, setImageFile] = useState<File | null>(null);
 
     const fetchSliders = async () => {
-        if (!API_BASE_URL) return;
         try {
             setLoading(true);
-            const res = await fetch(`${API_BASE_URL}/api/slider/admin/all`);
-            const result = await res.json();
+            const result = await fetchSlidersAction();
             if (result.success && result.data) {
                 setSliders(result.data);
             } else if (Array.isArray(result)) {
@@ -73,10 +75,12 @@ export default function SliderManagement() {
         if (imageFile) data.append('image', imageFile);
 
         try {
-            const url = editingSlider ? `${API_BASE_URL}/api/slider/${editingSlider.id}` : `${API_BASE_URL}/api/slider`;
-            const method = editingSlider ? 'PUT' : 'POST';
-            const res = await fetch(url, { method, body: data });
-            const result = await res.json();
+            let result;
+            if (editingSlider) {
+                result = await updateSliderAction(editingSlider.id, data);
+            } else {
+                result = await addSliderAction(data);
+            }
 
             if (result.success || result.message === 'Created' || result.message === 'Updated') {
                 fetchSliders();
@@ -95,8 +99,7 @@ export default function SliderManagement() {
     const handleDelete = async (id: number) => {
         if (!window.confirm("Delete this slider?")) return;
         try {
-            const res = await fetch(`${API_BASE_URL}/api/slider/${id}`, { method: 'DELETE' });
-            const result = await res.json();
+            const result = await deleteSliderAction(id);
             if (result.success || result.message === 'Deleted successfully') {
                 fetchSliders();
                 showToast("Logo deleted successfully!", "success");
@@ -107,12 +110,7 @@ export default function SliderManagement() {
     const handleBulkDelete = async () => {
         if (!window.confirm(`Delete ${selectedIds.length} sliders?`)) return;
         try {
-            const res = await fetch(`${API_BASE_URL}/api/slider/DeleteMultiple`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: selectedIds })
-            });
-            const result = await res.json();
+            const result = await bulkDeleteSlidersAction(selectedIds);
             if (result.success || result.message === 'Selected sliders deleted') {
                 setSelectedIds([]);
                 fetchSliders();

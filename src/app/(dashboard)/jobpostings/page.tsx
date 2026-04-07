@@ -1,5 +1,5 @@
-import JobPostingsTable from "../../../components/career/JobPostingsTable";
+import JobOpeningManager from "@/components/career/JobOpeningManager";
 
 export default function JobPostingsPage() {
-  return <JobPostingsTable />;
+  return <JobOpeningManager />;
 }

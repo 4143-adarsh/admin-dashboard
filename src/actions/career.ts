@@ -1,6 +1,18 @@
 "use server";
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from "next/cache";
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
 
 // 🔥 MAIN FIX: Same URL Logic jo aapne website me use kiya tha
 const getBaseUrl = () => {
@@ -16,7 +28,7 @@ export async function getCareersAction() {
     try {
         console.log(`⏳ Admin Fetching data from: ${API_URL}/api/career`); // Terminal me check karne ke liye
 
-        const response = await fetch(`${API_URL}/api/career`, {
+        const response = await fetchWithToken(`${API_URL}/api/career`, {
             method: "GET",
             headers: {
                 "Cache-Control": "no-cache",
@@ -42,7 +54,7 @@ export async function getCareersAction() {
 export async function updateCareerStatusAction(id: number, payload: { status?: string; remarks?: string }) {
     const API_URL = getBaseUrl();
     try {
-        const response = await fetch(`${API_URL}/api/career/${id}`, {
+        const response = await fetchWithToken(`${API_URL}/api/career/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -65,7 +77,7 @@ export async function updateCareerStatusAction(id: number, payload: { status?: s
 export async function deleteCareerAction(id: number) {
     const API_URL = getBaseUrl();
     try {
-        const response = await fetch(`${API_URL}/api/career/${id}`, {
+        const response = await fetchWithToken(`${API_URL}/api/career/${id}`, {
             method: "DELETE",
         });
 
@@ -83,7 +95,7 @@ export async function deleteCareerAction(id: number) {
 export async function deleteMultipleCareersAction(ids: number[]) {
     const API_URL = getBaseUrl();
     try {
-        const response = await fetch(`${API_URL}/api/career/DeleteMultiple`, {
+        const response = await fetchWithToken(`${API_URL}/api/career/DeleteMultiple`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

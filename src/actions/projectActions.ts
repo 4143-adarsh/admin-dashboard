@@ -1,6 +1,18 @@
 'use server'
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from 'next/cache';
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
 
 // 🔥 DYNAMIC API URL (Local vs Production)
 const getBaseUrl = () => {
@@ -16,7 +28,7 @@ const API_URL = getBaseUrl();
 export async function getProjectsAction() {
     console.log("🚀 [GET] Hitting Backend URL:", `${API_URL}/api/projects`);
     try {
-        const res = await fetch(`${API_URL}/api/projects`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/projects`, { cache: 'no-store' });
         
         const contentType = res.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
@@ -37,7 +49,7 @@ export async function createProjectAction(formData: any) {
     console.log("📦 Data being sent:", formData); // Dekhte hain data sahi ja raha hai ya nahi
 
     try {
-        const res = await fetch(`${API_URL}/api/projects`, {
+        const res = await fetchWithToken(`${API_URL}/api/projects`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -64,7 +76,7 @@ export async function createProjectAction(formData: any) {
 export async function updateProjectAction(projectId: string, formData: any) {
     console.log("🚀 [PUT] Hitting Backend URL:", `${API_URL}/api/projects/${projectId}`);
     try {
-        const res = await fetch(`${API_URL}/api/projects/${projectId}`, {
+        const res = await fetchWithToken(`${API_URL}/api/projects/${projectId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -88,7 +100,7 @@ export async function updateProjectAction(projectId: string, formData: any) {
 export async function deleteProjectAction(projectId: string) {
     console.log("🚀 [DELETE] Hitting Backend URL:", `${API_URL}/api/projects/${projectId}`);
     try {
-        const res = await fetch(`${API_URL}/api/projects/${projectId}`, {
+        const res = await fetchWithToken(`${API_URL}/api/projects/${projectId}`, {
             method: 'DELETE',
             cache: 'no-store'
         });

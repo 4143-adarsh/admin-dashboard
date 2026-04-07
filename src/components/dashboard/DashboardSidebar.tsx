@@ -33,11 +33,11 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
     { icon: BarChart3, label: 'Dashboard', href: '/crm-dashboard' },
-    
+
     // Yahan aage chalke '#' ko '/clients' aur '/client-users' se replace kar lenge
     { icon: Users, label: 'Customers', children: [{ name: 'Clients', href: '/clients' }, { name: 'Client Users', href: '/client-users' }] },
 
-   { icon: TrendingUp, label: 'Sales', children: [{ name: 'Leads', href: '/leads' }, { name: 'Invoices', href: '/invoices' }] },
+    { icon: TrendingUp, label: 'Sales', children: [{ name: 'Leads', href: '/leads' }, { name: 'Invoices', href: '/invoices' }] },
 
     { icon: Briefcase, label: 'Projects', href: '/projects' },
 
@@ -61,22 +61,22 @@ const menuItems: MenuItem[] = [
                 name: 'Career Section',
                 subItems: [
                     { name: 'Job Queries', href: '/career' },
-                    { name: 'Job Postings', href: '/career/jobpostings' }
+                    { name: 'Job Postings', href: '/jobpostings' }
                 ]
             }
         ]
     },
 
-    { icon: Mail, label: 'Contact Messages', href: '/contact' },
+    { icon: Mail, label: 'Contact Leads', href: '/contact' },
 
     // 🔥 SUPPORT SECTION
-    { 
-        icon: LifeBuoy, 
-        label: 'Support', 
+    {
+        icon: LifeBuoy,
+        label: 'Support',
         children: [
-            { name: 'Tickets', href: '/support/tickets' }, 
-            { name: 'Knowledgebase', href: '/knowledgebase' } 
-        ] 
+            { name: 'Tickets', href: '/support/tickets' },
+            { name: 'Knowledgebase', href: '/knowledgebase' }
+        ]
     },
 ];
 

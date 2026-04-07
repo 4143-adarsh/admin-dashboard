@@ -242,7 +242,7 @@ export const DashboardHeader = ({ isCollapsed, toggleSidebar }: DashboardHeaderP
                     )}
                 </div>
 
-                {/* 2. Settings Menu (EKDUM ORIGINAL) */}
+                {/* 2. Settings Menu (TEAM & ROLES REMOVED) */}
                 <div className="relative">
                     <button
                         onClick={() => toggleMenu('settings')}
@@ -255,9 +255,6 @@ export const DashboardHeader = ({ isCollapsed, toggleSidebar }: DashboardHeaderP
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
                             <Link href="/settings/company" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                                 <Building size={16} /> Company Details
-                            </Link>
-                            <Link href="/settings/team" onClick={() => setOpenMenu(null)} className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-                                <Users size={16} /> Team & Roles
                             </Link>
                         </div>
                     )}

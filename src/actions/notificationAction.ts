@@ -1,6 +1,18 @@
 'use server'
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from 'next/cache';
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
 
 const getBaseUrl = () => {
     let base = process.env.NEXT_PUBLIC_API_URL || "https://nighwan-tech-webbackend.onrender.com";
@@ -18,7 +30,7 @@ const API_URL = `${getBaseUrl()}/api/notifications`;
 // 1. Fetch All Notifications
 export async function getNotificationsAction() {
     try {
-        const res = await fetch(`${API_URL}/all`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/all`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { 
         return { success: false, message: error.message }; 
@@ -28,7 +40,7 @@ export async function getNotificationsAction() {
 // 2. Mark All as Read
 export async function markAllReadAction() {
     try {
-        const res = await fetch(`${API_URL}/read-all`, { method: 'PUT', cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/read-all`, { method: 'PUT', cache: 'no-store' });
         const result = await res.json();
         // Optional: aap chahein toh path revalidate kar sakte hain
         return result;

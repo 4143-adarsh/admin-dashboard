@@ -1,6 +1,18 @@
 'use server'
+import { cookies } from 'next/headers';
+
 
 import { revalidatePath } from 'next/cache';
+
+async function fetchWithToken(url: string, options: RequestInit = {}) {
+    const token = cookies().get('admin_token')?.value;
+    const headers = new Headers(options.headers || {});
+    if (token) {
+        headers.set('Authorization', "Bearer " + token);
+    }
+    return fetch(url, { ...options, headers });
+}
+
 
 // 🔥 DYNAMIC API URL (Sirf Base Domain dega, bina '/api' ke)
 const getBaseUrl = () => {
@@ -23,7 +35,7 @@ const API_URL = getBaseUrl();
 export async function createClientUserAction(data: any) {
     try {
         // Yahan dhyan dein: `/api/client-users/...` explicitly likha hai
-        const res = await fetch(`${API_URL}/api/client-users/create`, {
+        const res = await fetchWithToken(`${API_URL}/api/client-users/create`, {
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify(data), 
@@ -40,7 +52,7 @@ export async function createClientUserAction(data: any) {
 // 2. READ ALL
 export async function getClientUsersAction() {
     try {
-        const res = await fetch(`${API_URL}/api/client-users/all`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/client-users/all`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { 
         return { success: false, message: error.message }; 
@@ -50,7 +62,7 @@ export async function getClientUsersAction() {
 // 3. READ BY COMPANY
 export async function getClientUsersByCompanyAction(clientId: string | number) {
     try {
-        const res = await fetch(`${API_URL}/api/client-users/company/${clientId}`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/client-users/company/${clientId}`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { 
         return { success: false, message: error.message }; 
@@ -60,7 +72,7 @@ export async function getClientUsersByCompanyAction(clientId: string | number) {
 // 4. READ SINGLE
 export async function getClientUserByIdAction(id: string | number) {
     try {
-        const res = await fetch(`${API_URL}/api/client-users/${id}`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/client-users/${id}`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { 
         return { success: false, message: error.message }; 
@@ -70,7 +82,7 @@ export async function getClientUserByIdAction(id: string | number) {
 // 5. UPDATE
 export async function updateClientUserAction(id: string | number, data: any) {
     try {
-        const res = await fetch(`${API_URL}/api/client-users/${id}`, {
+        const res = await fetchWithToken(`${API_URL}/api/client-users/${id}`, {
             method: 'PUT', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify(data), 
@@ -87,7 +99,7 @@ export async function updateClientUserAction(id: string | number, data: any) {
 // 6. DELETE
 export async function deleteClientUserAction(id: string | number) {
     try {
-        const res = await fetch(`${API_URL}/api/client-users/${id}`, { method: 'DELETE', cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/client-users/${id}`, { method: 'DELETE', cache: 'no-store' });
         const result = await res.json();
         if (result.success) revalidatePath('/client-users');
         return result;
@@ -99,7 +111,7 @@ export async function deleteClientUserAction(id: string | number) {
 // Dropdown Helper (Company List laane ke liye)
 export async function getClientsDropdownAction() {
     try {
-        const res = await fetch(`${API_URL}/api/clients/all`, { cache: 'no-store' });
+        const res = await fetchWithToken(`${API_URL}/api/clients/all`, { cache: 'no-store' });
         return await res.json();
     } catch (error: any) { 
         return { success: false, message: error.message }; 
