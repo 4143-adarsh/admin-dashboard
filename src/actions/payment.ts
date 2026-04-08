@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 
 async function fetchWithToken(url: string, options: RequestInit = {}) {
     const token = cookies().get('admin_token')?.value;
